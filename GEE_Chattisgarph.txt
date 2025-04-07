@@ -1,0 +1,136 @@
+
+//Finl with additional
+// Define the region of interest (Chhattisgarh districts)
+var region = ee.FeatureCollection("FAO/GAUL/2015/level2")
+               .filter(ee.Filter.or(
+                 ee.Filter.eq('ADM2_NAME', 'Raigarh'),
+                 ee.Filter.eq('ADM2_NAME', 'Bilaspur'),
+                 ee.Filter.eq('ADM2_NAME', 'Korba'),
+                 ee.Filter.eq('ADM2_NAME', 'Koriya'),
+                 ee.Filter.eq('ADM2_NAME', 'Sarguja')
+               ));
+
+// Load MODIS Vegetation Data (NDVI & FPAR)
+var modisData = ee.ImageCollection('MODIS/061/MCD15A3H')
+                  .filterDate('2019-01-01', '2024-12-31')
+                  .filterBounds(region);
+
+// Load Climate Data (Rainfall, Temperature, Sunlight)
+var rainfall = ee.ImageCollection('UCSB-CHG/CHIRPS/DAILY')  // Rainfall in mm
+                  .filterDate('2019-01-01', '2024-12-31')
+                  .filterBounds(region)
+                  .select('precipitation');
+
+var climate = ee.ImageCollection('ECMWF/ERA5_LAND/DAILY_AGGR')  // Climate variables
+                  .filterDate('2019-01-01', '2024-12-31')
+                  .filterBounds(region)
+                  .select(['temperature_2m', 'total_precipitation_sum', 'surface_solar_radiation_downwards_sum']);
+
+// Load Soil pH data (public asset)
+var soilPH = ee.Image("OpenLandMap/SOL/SOL_PH-H2O_USDA-4C1A2A_M/v02")
+               .select('b0')
+               .rename('Soil_PH');
+
+// Function to clip images to the region
+var clipToRegion = function(image) {
+  return image.clip(region);
+};
+
+// Function to calculate NDVI using LAI and FPAR bands
+var calculateNDVI = function(image) {
+  var nir = image.select('Lai').multiply(0.1);
+  var red = image.select('Fpar').multiply(0.01);
+  var ndvi = nir.subtract(red).divide(nir.add(red)).rename('NDVI');
+  return image.addBands(ndvi);
+};
+
+// Function to predict crop yield using NDVI and FPAR
+var predictedCropYield = function(image) {
+  var ndvi = image.select('NDVI');
+  var fpar = image.select('Fpar').multiply(0.01);
+  var cropYields = [
+    ndvi.multiply(0.5).add(fpar.multiply(0.3)).add(0.2).rename('Crop_Yield_1'),
+    ndvi.multiply(0.4).add(fpar.multiply(0.4)).add(0.3).rename('Crop_Yield_2'),
+    ndvi.multiply(0.6).add(fpar.multiply(0.2)).add(0.1).rename('Crop_Yield_3')
+  ];
+  return image.addBands(ee.Image(cropYields));
+};
+
+// Function to combine three yield variants into a single metric (average)
+var combineCropYield = function(image) {
+  var combined = image.select(['Crop_Yield_1', 'Crop_Yield_2', 'Crop_Yield_3'])
+                      .reduce(ee.Reducer.mean())
+                      .rename('Combined_Crop_Yield');
+  return image.addBands(combined);
+};
+
+// Process MODIS images: clip, calculate NDVI, predict yields, then combine yields
+var clippedMODIS = modisData.map(clipToRegion);
+var modisWithNDVI = clippedMODIS.map(calculateNDVI);
+var cropYieldPrediction = modisWithNDVI.map(predictedCropYield);
+var combinedYieldPrediction = cropYieldPrediction.map(combineCropYield);
+
+// Define the list of years (2019 to 2024) and months (1 to 12)
+var years = ee.List.sequence(2019, 2024);
+var months = ee.List.sequence(1, 12);
+
+// Compute monthly statistics for each year-month combination
+var monthlyData = years.map(function(year) {
+  var monthly = months.map(function(month) {
+    var startDate = ee.Date.fromYMD(year, month, 1);
+    var endDate = startDate.advance(1, 'month');
+    
+    // Get monthly mean crop yield image
+    var monthlyImage = combinedYieldPrediction.filterDate(startDate, endDate).mean()
+                         .set('month', month)
+                         .set('year', year);
+    
+    // Get monthly mean rainfall and climate images
+    var rainfallImage = rainfall.filterDate(startDate, endDate).mean();
+    var climateImage = climate.filterDate(startDate, endDate).mean();
+    // Rename climate bands
+    climateImage = climateImage.rename(['Temperature', 'Total_Precipitation', 'Sunlight']);
+    
+    // Combine yield, rainfall, climate, and add soil pH (static)
+    var combinedImage = monthlyImage
+                          .addBands(rainfallImage.rename('Rainfall'))
+                          .addBands(climateImage)
+                          .addBands(soilPH);
+    
+    // Reduce the combined image over the region to get regional averages
+    var stats = combinedImage.reduceRegion({
+      reducer: ee.Reducer.mean(),
+      geometry: region,
+      scale: 500,
+      maxPixels: 1e9
+    });
+    
+    return ee.Feature(null, stats.set('month', month).set('year', year));
+  });
+  return monthly;
+}).flatten();
+
+// Convert results to a FeatureCollection and print for inspection
+var monthlyFeatureCollection = ee.FeatureCollection(monthlyData);
+print('Monthly Crop Yield, Climate & Soil pH Data (2019-2024):', monthlyFeatureCollection);
+
+// Visualization: Use December 2024 as an example
+var latestMonthlyImage = combinedYieldPrediction
+  .filterDate('2024-12-01', '2024-12-31')
+  .mean();
+var yieldVis = {
+  min: 0.1,
+  max: 0.7,
+  palette: ['#440154', '#3b528b', '#21908d', '#5dc962', '#fde725']
+};
+Map.addLayer(latestMonthlyImage.select('Combined_Crop_Yield'), yieldVis, 'Combined Crop Yield (Dec 2024)');
+Map.centerObject(region, 7);
+
+// Export the multi-year monthly data (crop yield, climate & soil pH) as a CSV
+Export.table.toDrive({
+  collection: monthlyFeatureCollection,
+  description: 'crop_yield_climate_soil_data_2019_2024',
+  folder: 'Learn Geography GIS RS With AI',
+  fileNamePrefix: 'crop_yield_climate_soil_data_2019_2024',
+  fileFormat: 'CSV'
+});
