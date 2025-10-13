@@ -1,0 +1,13 @@
+NORTH INDIA CROP PREDICTION - DATA SOURCES RESEARCH
+=======================================================
+
+Research Date: 2025-10-13 01:17:02
+Target States: Punjab, Haryana, Uttar Pradesh, Bihar, Madhya Pradesh
+Target Crops: Rice, Wheat, Maize
+
+SOURCES SUMMARY:
+- Total investigated: 21
+- Available: 6 (28.6%)
+- Automated: 4 (66.7%)
+
+WORLD BANK:

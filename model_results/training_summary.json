@@ -1,0 +1,147 @@
+{
+  "training_completed": "2025-10-13T16:05:25.321475",
+  "total_datasets": 5,
+  "total_models": 15,
+  "datasets": {
+    "bhopal_training": {
+      "models_trained": 3,
+      "best_model": "random_forest",
+      "best_r2": 0.9999997211211396,
+      "models": {
+        "ridge": {
+          "r2_score": 0.9999821085975721,
+          "mae": 0.00018292194882414673,
+          "rmse": 0.00024204396332025289,
+          "samples": 1826,
+          "features": 15
+        },
+        "random_forest": {
+          "r2_score": 0.9999997211211396,
+          "mae": 5.721154949019888e-06,
+          "rmse": 3.021898416177622e-05,
+          "samples": 1826,
+          "features": 15
+        },
+        "gradient_boosting": {
+          "r2_score": 0.9997524501640792,
+          "mae": 0.0006387761002618695,
+          "rmse": 0.0009003334481765961,
+          "samples": 1826,
+          "features": 15
+        }
+      }
+    },
+    "lucknow_training": {
+      "models_trained": 3,
+      "best_model": "random_forest",
+      "best_r2": 0.9999991502014138,
+      "models": {
+        "ridge": {
+          "r2_score": 0.9999819131517326,
+          "mae": 0.00017691765968804997,
+          "rmse": 0.0002433624176044619,
+          "samples": 1826,
+          "features": 15
+        },
+        "random_forest": {
+          "r2_score": 0.9999991502014138,
+          "mae": 7.022719072669017e-06,
+          "rmse": 5.2750923308334256e-05,
+          "samples": 1826,
+          "features": 15
+        },
+        "gradient_boosting": {
+          "r2_score": 0.9997508332646641,
+          "mae": 0.0007018097412201662,
+          "rmse": 0.0009032689768060555,
+          "samples": 1826,
+          "features": 15
+        }
+      }
+    },
+    "patna_training": {
+      "models_trained": 3,
+      "best_model": "random_forest",
+      "best_r2": 0.9999838074757714,
+      "models": {
+        "ridge": {
+          "r2_score": 0.99998023653052,
+          "mae": 0.0001941504772918652,
+          "rmse": 0.00025439212152051125,
+          "samples": 1826,
+          "features": 15
+        },
+        "random_forest": {
+          "r2_score": 0.9999838074757714,
+          "mae": 4.319621849865137e-05,
+          "rmse": 0.00023026574784842753,
+          "samples": 1826,
+          "features": 15
+        },
+        "gradient_boosting": {
+          "r2_score": 0.9996758462785454,
+          "mae": 0.000756039074891965,
+          "rmse": 0.0010302617336561384,
+          "samples": 1826,
+          "features": 15
+        }
+      }
+    },
+    "chandigarh_training": {
+      "models_trained": 3,
+      "best_model": "random_forest",
+      "best_r2": 0.9999991041672532,
+      "models": {
+        "ridge": {
+          "r2_score": 0.9999801026058946,
+          "mae": 0.00019651471173508218,
+          "rmse": 0.000255252594112768,
+          "samples": 1826,
+          "features": 15
+        },
+        "random_forest": {
+          "r2_score": 0.9999991041672532,
+          "mae": 1.441530816734184e-05,
+          "rmse": 5.416085733794936e-05,
+          "samples": 1826,
+          "features": 15
+        },
+        "gradient_boosting": {
+          "r2_score": 0.9997537071030203,
+          "mae": 0.0006940223572679494,
+          "rmse": 0.000898044809331672,
+          "samples": 1826,
+          "features": 15
+        }
+      }
+    },
+    "north_india_regional": {
+      "models_trained": 3,
+      "best_model": "random_forest",
+      "best_r2": 0.9999999929970576,
+      "models": {
+        "ridge": {
+          "r2_score": 0.9999989590627079,
+          "mae": 4.433518773262095e-05,
+          "rmse": 5.7603139585956e-05,
+          "samples": 7304,
+          "features": 15
+        },
+        "random_forest": {
+          "r2_score": 0.9999999929970576,
+          "mae": 2.783076195867666e-07,
+          "rmse": 4.724699025094828e-06,
+          "samples": 7304,
+          "features": 15
+        },
+        "gradient_boosting": {
+          "r2_score": 0.9998249823084789,
+          "mae": 0.0005844385439153221,
+          "rmse": 0.0007469213036274875,
+          "samples": 7304,
+          "features": 15
+        }
+      }
+    }
+  }
+}

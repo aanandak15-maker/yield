@@ -28,9 +28,9 @@ if 'year' in df_train.columns and 'month' in df_train.columns:
         df_train['month'].astype(int).astype(str) + '-01'
     )
 
-# Define features and target
-features = ['Fpar', 'NDVI', 'Rainfall', 'Sunlight', 'Soil_PH', 'Temperature']
-target = 'Combined_Crop_Yield'
+# Define features and target - updated to match processed data column names
+features = ['Fpar', 'NDVI', 'precipitation', 'solar_radiation', 'soil_ph', 'temp_mean']
+target = 'yield_proxy'  # Use yield proxy from processed data
 
 # Extract features and target from training data
 X = df_train[features]

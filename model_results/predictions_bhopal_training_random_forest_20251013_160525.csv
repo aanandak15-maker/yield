@@ -1,0 +1,13 @@
+month,predicted_yield,model,dataset
+1.0,0.44538909934794374,random_forest,bhopal_training
+2.0,0.4827939334354886,random_forest,bhopal_training
+3.0,0.5002763597350494,random_forest,bhopal_training
+4.0,0.49966340603652926,random_forest,bhopal_training
+5.0,0.4997440373005162,random_forest,bhopal_training
+6.0,0.45498322305937117,random_forest,bhopal_training
+7.0,0.378826087262484,random_forest,bhopal_training
+8.0,0.41828558487770723,random_forest,bhopal_training
+9.0,0.5470809974315363,random_forest,bhopal_training
+10.0,0.6356048262562897,random_forest,bhopal_training
+11.0,0.5777773573206771,random_forest,bhopal_training
+12.0,0.44500297666194677,random_forest,bhopal_training

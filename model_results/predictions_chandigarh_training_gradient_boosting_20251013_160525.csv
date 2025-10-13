@@ -1,0 +1,13 @@
+month,predicted_yield,model,dataset
+1.0,0.475100142844592,gradient_boosting,chandigarh_training
+2.0,0.4833071832510509,gradient_boosting,chandigarh_training
+3.0,0.48389981496388546,gradient_boosting,chandigarh_training
+4.0,0.5028682581514625,gradient_boosting,chandigarh_training
+5.0,0.5061882149608863,gradient_boosting,chandigarh_training
+6.0,0.4554890476539392,gradient_boosting,chandigarh_training
+7.0,0.37264999641726326,gradient_boosting,chandigarh_training
+8.0,0.4355542679444412,gradient_boosting,chandigarh_training
+9.0,0.556404183912885,gradient_boosting,chandigarh_training
+10.0,0.6319104515804365,gradient_boosting,chandigarh_training
+11.0,0.5526451639809677,gradient_boosting,chandigarh_training
+12.0,0.4725669594800573,gradient_boosting,chandigarh_training

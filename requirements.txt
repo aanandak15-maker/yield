@@ -1,5 +1,30 @@
-pandas
-numpy
-matplotlib
-seaborn
-scikit-learn
+pandas==2.1.4
+numpy==1.24.3
+matplotlib==3.8.0
+seaborn==0.12.2
+scikit-learn==1.3.0
+requests==2.31.0
+geopandas==0.14.3
+osmnx==1.8.0
+earthengine-api==0.1.396
+wbdata==0.4.1
+faostat==0.3.0
+cdsapi==0.6.1
+rasterio==1.3.8
+folium==0.15.1
+geemap==0.31.0
+Shapely==2.0.1
+
+# Phase 6: Real-time Prediction Service
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+python-multipart==0.0.6
+flask==3.0.0
+flask-cors==4.0.0
+
+# Additional libraries for compatibility
+openpyxl==3.1.2
+xlrd==2.0.1
+joblib==1.3.2
+xgboost==2.0.0

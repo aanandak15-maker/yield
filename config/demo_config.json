@@ -1,0 +1,50 @@
+{
+  "google_earth_engine": {
+    "service_account_email": "demo-gee-service@demo-project.iam.gserviceaccount.com",
+    "private_key_path": "config/demo_gee_key.json",
+    "project_id": "demo-gee-project",
+    "datasets": {
+      "ndvi": "MODIS/061/MOD13Q1",
+      "evi": "MODIS/061/MOD13Q1",
+      "land_surface_temp": "MODIS/061/MOD11A1",
+      "precipitation": "UCSB-CHG/CHIRPS/DAILY"
+    },
+    "scale": 250,
+    "max_pixels": 1000000000
+  },
+  "openweather": {
+    "api_key": "demo-openweather-api-key-12345",
+    "base_url": "https://api.openweathermap.org/data",
+    "endpoints": {
+      "current": "/2.5/weather",
+      "forecast": "/2.5/forecast",
+      "history": "/2.5/history/city"
+    },
+    "hourly_params": [
+      "temp", "humidity", "pressure", "wind_speed", "precipitation", "cloudiness"
+    ]
+  },
+  "data_refresh": {
+    "satellite_data_hourly": 6,
+    "weather_forecast_daily": 24,
+    "historical_weather_monthly": 720,
+    "batch_size": 1000,
+    "max_retries": 3
+  },
+  "storage": {
+    "database_path": "data/database/crop_prediction.db",
+    "cache_path": "data/cache/",
+    "logs_path": "logs/",
+    "max_cache_age_days": 7
+  },
+  "north_india_region": {
+    "bbox": [68.0, 8.0, 97.0, 37.0],
+    "states": [
+      {"name": "Punjab", "capital": "Chandigarh", "lat": 30.9, "lon": 75.85},
+      {"name": "Haryana", "capital": "Chandigarh", "lat": 29.05, "lon": 76.08},
+      {"name": "Uttar Pradesh", "capital": "Lucknow", "lat": 26.85, "lon": 80.92},
+      {"name": "Bihar", "capital": "Patna", "lat": 25.6, "lon": 85.1},
+      {"name": "Madhya Pradesh", "capital": "Bhopal", "lat": 23.25, "lon": 77.42}
+    ]
+  }
+}

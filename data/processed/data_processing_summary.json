@@ -1,0 +1,27 @@
+{
+  "phase": "3_data_processing",
+  "completed_at": "2025-10-13T15:11:06.426577",
+  "metrics": {
+    "weather_records": 14588,
+    "boundary_states": 5,
+    "integrated_records": 14588,
+    "seasonal_records": 14588,
+    "training_datasets": 5
+  },
+  "output_directory": "data/processed",
+  "output_files": [
+    "training_chandigarh_training.csv",
+    "training_maize_specific.csv",
+    "north_india_weather_processed.csv",
+    "north_india_integrated_weather_boundaries.csv",
+    "training_patna_training.csv",
+    "training_lucknow_training.csv",
+    "training_north_india_regional.csv",
+    "north_india_state_boundaries.csv",
+    "training_rice_specific.csv",
+    "training_bhopal_training.csv",
+    "north_india_weather_with_crop_seasons.csv",
+    "training_wheat_specific.csv",
+    "integrated_crop_weather_data.csv"
+  ]
+}

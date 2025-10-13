@@ -1,0 +1,244 @@
+{
+  "timestamp": "20251013_011702",
+  "target_region": [
+    "Punjab",
+    "Haryana",
+    "Uttar Pradesh",
+    "Bihar",
+    "Madhya Pradesh"
+  ],
+  "target_crops": [
+    "Rice",
+    "Wheat",
+    "Maize"
+  ],
+  "research_results": {
+    "world_bank": {
+      "available": true,
+      "indicators": {
+        "AG.YLD.CREL.KG": [
+          {
+            "id": "AG.YLD.CREL.KG",
+            "name": "Cereal yield (kg per hectare)",
+            "unit": "",
+            "source": {
+              "id": "2",
+              "value": "World Development Indicators"
+            },
+            "sourceNote": "Cereal yield, measured as kilograms per hectare of harvested land, includes wheat, rice, maize, barley, oats, rye, millet, sorghum, buckwheat, and mixed grains. Production data on cereals relate to crops harvested for dry grain only. Cereal crops harvested for hay or harvested green for food, feed, or silage and those used for grazing are excluded. The FAO allocates production data to the calendar year in which the bulk of the harvest took place. Most of a crop harvested near the end of a year will be used in the following year.",
+            "sourceOrganization": "FAO electronic files and web site, Food and Agriculture Organization of the United Nations (FAO), publisher: Food and Agriculture Organization of the United Nations (FAO)",
+            "topics": [
+              {
+                "id": "1",
+                "value": "Agriculture & Rural Development  "
+              },
+              {
+                "id": "19",
+                "value": "Climate Change"
+              }
+            ]
+          }
+        ],
+        "AG.PRD.CREL.MT": [
+          {
+            "id": "AG.PRD.CREL.MT",
+            "name": "Cereal production (metric tons)",
+            "unit": "",
+            "source": {
+              "id": "2",
+              "value": "World Development Indicators"
+            },
+            "sourceNote": "Production data on cereals relate to crops harvested for dry grain only. Cereal crops harvested for hay or harvested green for food, feed, or silage and those used for grazing are excluded.",
+            "sourceOrganization": "FAO electronic files and web site, Food and Agriculture Organization of the United Nations (FAO), publisher: Food and Agriculture Organization of the United Nations (FAO)",
+            "topics": [
+              {
+                "id": "1",
+                "value": "Agriculture & Rural Development  "
+              }
+            ]
+          }
+        ],
+        "AG.LND.CREL.HA": [
+          {
+            "id": "AG.LND.CREL.HA",
+            "name": "Land under cereal production (hectares)",
+            "unit": "",
+            "source": {
+              "id": "2",
+              "value": "World Development Indicators"
+            },
+            "sourceNote": "Land under cereal production refers to harvested area, although some countries report only sown or cultivated area. Cereals include wheat, rice, maize, barley, oats, rye, millet, sorghum, buckwheat, and mixed grains. Production data on cereals relate to crops harvested for dry grain only. Cereal crops harvested for hay or harvested green for food, feed, or silage and those used for grazing are excluded.",
+            "sourceOrganization": "FAO electronic files and web site, Food and Agriculture Organization of the United Nations (FAO), publisher: Food and Agriculture Organization of the United Nations (FAO)",
+            "topics": [
+              {
+                "id": "1",
+                "value": "Agriculture & Rural Development  "
+              }
+            ]
+          }
+        ],
+        "SP.POP.TOTL": [
+          {
+            "id": "SP.POP.TOTL",
+            "name": "Population, total",
+            "unit": "",
+            "source": {
+              "id": "2",
+              "value": "World Development Indicators"
+            },
+            "sourceNote": "Total population is based on the de facto definition of population, which counts all residents regardless of legal status or citizenship. The values shown are midyear estimates.",
+            "sourceOrganization": "World Population Prospects, United Nations (UN), uri: https://population.un.org/wpp/, publisher: UN Population Division;\nStatistical databases and publications from national statistical offices, National Statistical Offices, uri: https://unstats.un.org/home/nso_sites/, publisher: National Statistical Offices;\nEurostat: Demographic Statistics, Eurostat (ESTAT), uri: https://ec.europa.eu/eurostat/data/database?node_code=earn_ses_monthly, publisher: Eurostat;\nPopulation and Vital Statistics Report (various years), United Nations (UN), uri: https://unstats.un.org, publisher: UN Statistics Division",
+            "topics": [
+              {
+                "id": "19",
+                "value": "Climate Change"
+              },
+              {
+                "id": "8",
+                "value": "Health "
+              }
+            ]
+          }
+        ],
+        "AG.LND.TOTL.K2": [
+          {
+            "id": "AG.LND.TOTL.K2",
+            "name": "Land area (sq. km)",
+            "unit": "",
+            "source": {
+              "id": "2",
+              "value": "World Development Indicators"
+            },
+            "sourceNote": "Land area is a country's total area, excluding area under inland water bodies, national claims to continental shelf, and exclusive economic zones. In most cases the definition of inland water bodies includes major rivers and lakes.",
+            "sourceOrganization": "FAOSTAT, Food and Agriculture Organization of the United Nations (FAO), uri: https://www.fao.org/faostat/en/#data/RL, publisher: Food and Agriculture Organization of the United Nations (FAO)",
+            "topics": [
+              {
+                "id": "1",
+                "value": "Agriculture & Rural Development  "
+              },
+              {
+                "id": "6",
+                "value": "Environment "
+              }
+            ]
+          }
+        ]
+      },
+      "api_url": "https://api.worldbank.org/v2/indicator",
+      "temporal_coverage": "1960-present",
+      "geographical_level": "Country level (IND)",
+      "automated_access": true
+    },
+    "faostat": {
+      "available": false,
+      "error": 521
+    },
+    "indian_govt": {
+      "data.gov.in": {
+        "available": false,
+        "error": "HTTP 403"
+      },
+      "Ministry of Agriculture API": {
+        "available": true,
+        "api_url": "https://agmarknet.gov.in",
+        "response_status": 200,
+        "data_format": "text/html; charset=utf-8",
+        "has_sample_data": false
+      },
+      "Indian Meteorological Department": {
+        "available": false,
+        "error": "HTTP 404"
+      }
+    },
+    "climate_weather": {
+      "open_meteo": {
+        "available": true,
+        "api_url": "https://api.open-meteo.com/v1/forecast",
+        "temporal_coverage": "Current + forecast",
+        "automated": true,
+        "requirements": "None",
+        "rate_limit": "10,000/hour",
+        "test_response": 200
+      },
+      "nasa_power": {
+        "available": true,
+        "api_url": "https://power.larc.nasa.gov/api/temporal/daily/point",
+        "temporal_coverage": "1981-present",
+        "automated": true,
+        "requirements": "None",
+        "rate_limit": "1000/hour",
+        "test_response": 200
+      },
+      "cdsapi_era5": {
+        "api_url": "https://cds.climate.copernicus.eu/api/v2",
+        "note": "Requires free account, programmatic access",
+        "temporal_coverage": "1950-present",
+        "requirements": "API key, small quota",
+        "available": true
+      }
+    },
+    "geospatial": {
+      "gadm_boundaries": {
+        "description": "Global Administrative Areas database",
+        "url": "https://gadm.org/download_world.html",
+        "file_url": "https://biogeo.ucdavis.edu/data/gadm/gadm4.1/shp/gadm41_IND_shp.zip",
+        "automated": true,
+        "outdated": false
+      },
+      "natural_earth": {
+        "description": "Natural Earth administrative boundaries",
+        "url": "https://www.naturalearthdata.com",
+        "api_access": false,
+        "automated": false
+      },
+      "osm_boundaries": {
+        "description": "OpenStreetMap administrative boundaries",
+        "library": "osmnx",
+        "automated": true,
+        "python_api": true
+      },
+      "cropland_extent": {
+        "description": "Global cropland extent maps",
+        "source": "EarthStat (Geotiff downloads)",
+        "url": "https://www.earthstat.org/cropland-data/",
+        "automated": false
+      }
+    },
+    "agricultural_zones": {
+      "soilgrids": {
+        "description": "Global soil properties maps",
+        "url": "https://soilgrids.org",
+        "api_url": "https://rest.soilgrids.org/query",
+        "test_url": "https://rest.soilgrids.org/query?lon=75.85&lat=30.9",
+        "properties": [
+          "pH",
+          "organic_carbon",
+          "sand",
+          "clay"
+        ]
+      },
+      "irrigation": {
+        "description": "Global irrigation maps",
+        "source": "GEM (Global Map of Irrigated Areas)",
+        "url": "https://www.iwmigem.org",
+        "automated": true
+      },
+      "crop_distribution": {
+        "description": "SPAM crop distribution maps",
+        "source": "MapSPAM (Spatial Production Allocation Model)",
+        "url": "https://www.mapspam.info",
+        "covers_india": true,
+        "crops": [
+          "Rice",
+          "Wheat",
+          "Maize"
+        ]
+      }
+    }
+  },
+  "summary": {
+    "total_sources": 21,
+    "available_sources": 6,
+    "automated_sources": 4
+  }
+}

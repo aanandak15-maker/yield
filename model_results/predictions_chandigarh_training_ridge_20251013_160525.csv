@@ -1,0 +1,13 @@
+month,predicted_yield,model,dataset
+1.0,-28563110.055839077,ridge,chandigarh_training
+2.0,-38835331.46803252,ridge,chandigarh_training
+3.0,-55227338.566896565,ridge,chandigarh_training
+4.0,-64609905.42469006,ridge,chandigarh_training
+5.0,-64311163.28851526,ridge,chandigarh_training
+6.0,-42973119.72444014,ridge,chandigarh_training
+7.0,-15115007.049750922,ridge,chandigarh_training
+8.0,-12456057.608421346,ridge,chandigarh_training
+9.0,-20618968.709919196,ridge,chandigarh_training
+10.0,-29523287.362553652,ridge,chandigarh_training
+11.0,-32604235.337561566,ridge,chandigarh_training
+12.0,-24201160.318816066,ridge,chandigarh_training

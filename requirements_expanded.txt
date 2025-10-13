@@ -1,0 +1,23 @@
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+requests
+geopandas
+osmnx
+earthengine-api
+wbdata
+faostat
+cdsapi
+rasterio
+folium
+geemap
+
+# Phase 6: Real-time Prediction Service
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+python-multipart==0.0.6
+flask==3.0.0
+flask-cors==4.0.0

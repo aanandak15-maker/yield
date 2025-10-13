@@ -1,0 +1,6 @@
+state_code,state_name,area_km2,center_lat,center_lon,geometry_type,coordinates_count
+Punjab,Punjab,50751.94640013566,31.018156237958383,75.32768600030676,Polygon,7827.0
+Haryana,Haryana,,,,MultiPolygon,
+UP,Uttar Pradesh,,,,MultiPolygon,
+Bihar,Bihar,95076.02105269118,25.984670081131355,86.2636752648471,Polygon,20240.0
+MP,Madhya Pradesh,,,,MultiPolygon,

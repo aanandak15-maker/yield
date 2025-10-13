@@ -1,0 +1,13 @@
+month,predicted_yield,model,dataset
+1.0,-35235179.513858914,ridge,patna_training
+2.0,-47906894.63653503,ridge,patna_training
+3.0,-68127919.19320476,ridge,patna_training
+4.0,-79702165.14058079,ridge,patna_training
+5.0,-79333639.87077911,ridge,patna_training
+6.0,-53011230.2591058,ridge,patna_training
+7.0,-18645725.834300898,ridge,patna_training
+8.0,-15365672.99510238,ridge,patna_training
+9.0,-25435364.147334207,ridge,patna_training
+10.0,-36419648.16006459,ridge,patna_training
+11.0,-40220274.17809395,ridge,patna_training
+12.0,-29854319.577220917,ridge,patna_training

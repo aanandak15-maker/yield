@@ -1,0 +1,81 @@
+WEATHER DATA QUALITY REPORT - PATNA
+==================================================
+
+Records: 3647
+Date Range: 2015-10-16 00:00:00 to 2025-10-09 00:00:00
+
+COLUMN STATISTICS:
+
+LATITUDE:
+  Count: 3647.0
+  Mean: 25.60
+.2f  Missing: 0
+
+LONGITUDE:
+  Count: 3647.0
+  Mean: 85.10
+.2f  Missing: 0
+
+TEMP_MAX:
+  Count: 3647.0
+  Mean: 32.92
+.2f  Missing: 0
+
+TEMP_MIN:
+  Count: 3647.0
+  Mean: 20.80
+.2f  Missing: 0
+
+TEMP_MEAN:
+  Count: 0.0
+  Mean: nan
+.2f  Missing: 3647
+
+PRECIPITATION:
+  Count: 0.0
+  Mean: nan
+.2f  Missing: 3647
+
+HUMIDITY:
+  Count: 3647.0
+  Mean: 56.71
+.2f  Missing: 0
+
+SOLAR_RADIATION:
+  Count: 3643.0
+  Mean: 16.37
+.2f  Missing: 4
+
+TEMP_RANGE:
+  Count: 3647.0
+  Mean: 12.12
+.2f  Missing: 0
+
+GDD:
+  Count: 0.0
+  Mean: nan
+.2f  Missing: 3647
+
+PRECIPITATION_7D_SUM:
+  Count: 3647.0
+  Mean: 0.00
+.2f  Missing: 0
+
+HEAT_STRESS_DAYS:
+  Count: 3647.0
+  Mean: 0.33
+.2f  Missing: 0
+
+ET_PROXY:
+  Count: 3643.0
+  Mean: 0.16
+.2f  Missing: 4
+
+WATER_AVAILABILITY_INDEX:
+  Count: 0.0
+  Mean: nan
+.2f  Missing: 3647
+
+QUALITY METRICS:
+  Average Date Gap: 1.0 days
+  Maximum Date Gap: 1 days

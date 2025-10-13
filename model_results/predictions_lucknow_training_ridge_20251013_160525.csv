@@ -1,0 +1,13 @@
+month,predicted_yield,model,dataset
+1.0,-28671889.695073314,ridge,lucknow_training
+2.0,-38983232.33944795,ridge,lucknow_training
+3.0,-55437667.66954946,ridge,lucknow_training
+4.0,-64855967.60456823,ridge,lucknow_training
+5.0,-64556087.674385905,ridge,lucknow_training
+6.0,-43136779.01027842,ridge,lucknow_training
+7.0,-15172570.276753576,ridge,lucknow_training
+8.0,-12503494.469159558,ridge,lucknow_training
+9.0,-20697493.465054177,ridge,lucknow_training
+10.0,-29635723.735029664,ridge,lucknow_training
+11.0,-32728405.37187686,ridge,lucknow_training
+12.0,-24293327.691116232,ridge,lucknow_training

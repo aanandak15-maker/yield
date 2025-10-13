@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Yield Prediction Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50">
+    <div id="app" class="min-h-screen">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-green-600 to-blue-600 text-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 py-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <i class="fas fa-seedling text-2xl"></i>
+                        <div>
+                            <h1 class="text-2xl font-bold">Crop Yield Prediction</h1>
+                            <p class="text-green-100 text-sm">North India Agricultural Intelligence System</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm text-green-100">API Status: <span class="font-semibold" :class="apiHealth ? 'text-green-300' : 'text-red-300'" v-text="apiHealth ? 'Online' : 'Offline'"></span></div>
+                        <div class="text-xs text-green-200">Phase 6: Real-time Prediction Service</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <!-- Loading Overlay -->
+            <div v-if="loading" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-lg p-6 shadow-xl">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
+                    <p class="mt-4 text-gray-600" v-text="loadingText"></p>
+                </div>
+            </div>
+
+            <!-- Error Alert -->
+            <div v-if="error" class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded">
+                <div class="flex">
+                    <i class="fas fa-exclamation-triangle text-red-500 mt-1 mr-3"></i>
+                    <div>
+                        <h3 class="text-red-800 font-medium">Error</h3>
+                        <p class="text-red-700 text-sm" v-text="error"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Alert -->
+            <div v-if="success" class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                <div class="flex">
+                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                    <div>
+                        <h3 class="text-green-800 font-medium">Prediction Complete</h3>
+                        <p class="text-green-700 text-sm" v-text="success"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Input Form -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-calculator text-green-600 mr-2"></i>
+                            Prediction Parameters
+                        </h2>
+
+                        <form @submit.prevent="makePrediction" class="space-y-6">
+                            <!-- Crop Selection -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Crop Type</label>
+                                    <select v-model="form.crop_type" required
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        <option value="">Select Crop</option>
+                                        <option v-for="crop in availableCrops" :key="crop" :value="crop" v-text="crop"></option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Variety</label>
+                                    <select v-model="form.variety_name" required
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        <option value="">Select Variety</option>
+                                        <option v-for="variety in currentVarieties" :key="variety" :value="variety" v-text="variety"></option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Location -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="md:col-span-2">
+                                        <input type="text" v-model="form.location_name" placeholder="Location name (e.g., Bhopal, Lucknow)"
+                                               required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                                    </div>
+                                    <button type="button" @click="useCurrentLocation"
+                                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center">
+                                        <i class="fas fa-map-marker-alt mr-2"></i>
+                                        Current
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Coordinates -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Latitude</label>
+                                    <input type="number" step="0.0001" v-model.number="form.latitude"
+                                           placeholder="23.2599" min="-90" max="90"
+                                           required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Longitude</label>
+                                    <input type="number" step="0.0001" v-model.number="form.longitude"
+                                           placeholder="77.4126" min="-180" max="180"
+                                           required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                                </div>
+                            </div>
+
+                            <!-- Sowing Date -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Sowing Date</label>
+                                <input type="date" v-model="form.sowing_date" required
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                            </div>
+
+                            <!-- Options -->
+                            <div class="flex items-center space-x-6">
+                                <label class="flex items-center">
+                                    <input type="checkbox" v-model="form.use_real_time_data"
+                                           class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                                    <span class="ml-2 text-sm text-gray-700">Use real-time satellite & weather data</span>
+                                </label>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="flex space-x-4">
+                                <button type="submit" :disabled="!canSubmit"
+                                        class="flex-1 px-6 py-3 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
+                                    <i class="fas fa-magic mr-2"></i>
+                                    Predict Yield
+                                </button>
+
+                                <button type="button" @click="clearForm"
+                                        class="px-6 py-3 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                                    <i class="fas fa-redo mr-2"></i>
+                                    Clear
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Recent Predictions -->
+                    <div v-if="predictions.length > 0" class="bg-white rounded-lg shadow-md p-6 mt-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-history text-blue-600 mr-2"></i>
+                            Recent Predictions
+                        </h3>
+                        <div class="space-y-3">
+                            <div v-for="pred in predictions.slice(0, 5)" :key="pred.id"
+                                 class="p-4 bg-gray-50 rounded-lg border-l-4"
+                                 :class="pred.error ? 'border-l-red-500' : 'border-l-green-500'">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <div class="font-medium text-gray-800">
+                                            <span v-text="pred.input.crop_type"></span>
+                                            <span class="text-gray-500">-</span>
+                                            <span v-text="pred.input.location_name"></span>
+                                        </div>
+                                        <div class="text-sm text-gray-600" v-text="formatDate(pred.timestamp)"></div>
+                                    </div>
+                                    <div v-if="!pred.error" class="text-right">
+                                        <div class="text-lg font-bold text-green-600" v-text="`${pred.prediction.yield_tons_per_hectare} t/ha`"></div>
+                                        <div class="text-xs text-gray-500" v-text="`±${(pred.prediction.upper_bound - pred.prediction.lower_bound).toFixed(1)} t/ha`"></div>
+                                    </div>
+                                    <div v-else class="text-right">
+                                        <i class="fas fa-exclamation-triangle text-red-500"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results Panel -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-lg shadow-md p-6 sticky top-6">
+                        <h2 class="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+                            <i class="fas fa-chart-line text-blue-600 mr-2"></i>
+                            Prediction Results
+                        </h2>
+
+                        <div v-if="!latestPrediction" class="text-center py-12 text-gray-500">
+                            <i class="fas fa-seedling text-4xl mb-4 opacity-50"></i>
+                            <p>Enter parameters and click "Predict Yield" to get started</p>
+                        </div>
+
+                        <div v-else-if="latestPrediction.error" class="text-center py-12 text-red-500">
+                            <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
+                            <h3 class="font-semibold mb-2">Prediction Failed</h3>
+                            <p class="text-sm" v-text="latestPrediction.error.message"></p>
+                        </div>
+
+                        <div v-else class="space-y-6">
+                            <!-- Main Prediction -->
+                            <div class="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg border">
+                                <div class="text-center mb-4">
+                                    <div class="text-3xl font-bold text-green-600" v-text="latestPrediction.prediction.yield_tons_per_hectare"></div>
+                                    <div class="text-sm text-gray-600">tons per hectare</div>
+                                </div>
+
+                                <!-- Confidence Interval -->
+                                <div class="text-center mb-4">
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Confidence Interval</div>
+                                    <div class="text-sm font-medium text-gray-700">
+                                        <span v-text="`${latestPrediction.prediction.lower_bound} - ${latestPrediction.prediction.upper_bound} t/ha`"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Confidence Score -->
+                                <div class="text-center">
+                                    <div class="w-full bg-gray-200 rounded-full h-2 mb-2">
+                                        <div class="bg-green-600 h-2 rounded-full"
+                                             :style="{ width: `${latestPrediction.prediction.confidence_score * 100}%` }"></div>
+                                    </div>
+                                    <div class="text-xs text-gray-500" v-text="`Confidence: ${(latestPrediction.prediction.confidence_score * 100).toFixed(1)}%`"></div>
+                                </div>
+                            </div>
+
+                            <!-- Model Info -->
+                            <div class="space-y-3">
+                                <h4 class="font-medium text-gray-800">Model Information</h4>
+                                <div class="grid grid-cols-2 gap-3 text-sm">
+                                    <div class="bg-gray-50 p-3 rounded">
+                                        <div class="text-gray-600">Algorithm</div>
+                                        <div class="font-medium" v-text="latestPrediction.model.algorithm.replace('_', ' ').toUpperCase()"></div>
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded">
+                                        <div class="text-gray-600">Location</div>
+                                        <div class="font-medium" v-text="latestPrediction.model.location_used.replace('_', ' ').toUpperCase()"></div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded text-sm">
+                                    <div class="text-gray-600">Features Used</div>
+                                    <div class="font-medium" v-text="latestPrediction.model.feature_count"></div>
+                                </div>
+                            </div>
+
+                            <!-- Variety Adjustment -->
+                            <div class="space-y-3">
+                                <h4 class="font-medium text-gray-800">Variety Intelligence</h4>
+                                <div class="bg-blue-50 p-4 rounded">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <span class="text-sm text-gray-700">Base Yield</span>
+                                        <span class="font-medium" v-text="`${latestPrediction.prediction.yield_tons_per_hectare} t/ha`"></span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm text-gray-700">Variety Adjusted</span>
+                                        <span class="font-medium text-blue-600" v-text="`${latestPrediction.prediction.variety_adjusted_yield} t/ha`"></span>
+                                    </div>
+                                    <div class="mt-2 text-xs text-gray-600">
+                                        Adjustment: <span :class="latestPrediction.prediction.variety_adjusted_yield > latestPrediction.prediction.yield_tons_per_hectare ? 'text-green-600' : 'text-red-600'">
+                                            <span v-text="latestPrediction.prediction.variety_adjusted_yield > latestPrediction.prediction.yield_tons_per_hectare ? '+' : ''"></span>
+                                            <span v-text="`${(latestPrediction.prediction.variety_adjusted_yield - latestPrediction.prediction.yield_tons_per_hectare).toFixed(2)} t/ha`"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Environmental Factors -->
+                            <div class="space-y-3">
+                                <h4 class="font-medium text-gray-800">Environmental Factors</h4>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <span>Heat Stress Impact</span>
+                                        <span :class="latestPrediction.factors.environmental_adjustments.heat_stress_penalty > 0 ? 'text-red-600' : 'text-green-600'"
+                                              v-text="`${(latestPrediction.factors.environmental_adjustments.heat_stress_penalty * 100).toFixed(1)}%`"></span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span>Drought Impact</span>
+                                        <span :class="latestPrediction.factors.environmental_adjustments.drought_penalty > 0 ? 'text-red-600' : 'text-green-600'"
+                                              v-text="`${(latestPrediction.factors.environmental_adjustments.drought_penalty * 100).toFixed(1)}%`"></span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span>Cold Stress Impact</span>
+                                        <span :class="latestPrediction.factors.environmental_adjustments.cold_stress_penalty > 0 ? 'text-red-600' : 'text-green-600'"
+                                              v-text="`${(latestPrediction.factors.environmental_adjustments.cold_stress_penalty * 100).toFixed(1)}%`"></span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span>Optimal Temp Bonus</span>
+                                        <span class="text-green-600" v-text="`${(latestPrediction.factors.environmental_adjustments.optimal_temp_bonus * 100).toFixed(1)}%`"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Data Sources -->
+                            <div class="space-y-3">
+                                <h4 class="font-medium text-gray-800">Data Sources</h4>
+                                <div class="grid grid-cols-2 gap-3 text-sm">
+                                    <div class="bg-gray-50 p-3 rounded">
+                                        <div class="text-gray-600">Satellite Data</div>
+                                        <div class="font-medium" v-text="latestPrediction.data_sources.satellite_data_points"></div>
+                                        <div class="text-xs text-gray-500">points</div>
+                                    </div>
+                                    <div class="bg-gray-50 p-3 rounded">
+                                        <div class="text-gray-600">Weather Data</div>
+                                        <div class="font-medium" v-text="latestPrediction.data_sources.weather_data_points"></div>
+                                        <div class="text-xs text-gray-500">points</div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded text-sm">
+                                    <div class="text-gray-600">Data Freshness</div>
+                                    <div class="font-medium" v-text="`${latestPrediction.data_sources.data_freshness_hours} hours`"></div>
+                                </div>
+                            </div>
+
+                            <!-- Performance -->
+                            <div class="bg-gray-50 p-4 rounded text-center">
+                                <div class="text-xs text-gray-500 uppercase tracking-wide">Processing Time</div>
+                                <div class="text-lg font-semibold text-gray-800" v-text="`${latestPrediction.processing_time_seconds.toFixed(2)}s`"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    loading: false,
+                    loadingText: '',
+                    error: null,
+                    success: null,
+                    apiHealth: false,
+                    availableCrops: [],
+                    currentVarieties: [],
+                    latestPrediction: null,
+                    predictions: [],
+
+                    form: {
+                        crop_type: '',
+                        variety_name: '',
+                        location_name: '',
+                        latitude: null,
+                        longitude: null,
+                        sowing_date: '',
+                        use_real_time_data: false
+                    }
+                };
+            },
+
+            computed: {
+                canSubmit() {
+                    return this.form.crop_type &&
+                           this.form.variety_name &&
+                           this.form.location_name &&
+                           this.form.latitude &&
+                           this.form.longitude &&
+                           this.form.sowing_date &&
+                           this.apiHealth;
+                }
+            },
+
+            watch: {
+                'form.crop_type'(newCrop) {
+                    if (newCrop && this.availableCrops[newCrop]) {
+                        this.currentVarieties = this.availableCrops[newCrop].varieties || [];
+                    } else {
+                        this.currentVarieties = [];
+                    }
+                }
+            },
+
+            async mounted() {
+                await this.checkApiHealth();
+                await this.loadCropsAndVarieties();
+
+                // Set default today - 60 days for realistic sowing date
+                const date = new Date();
+                date.setDate(date.getDate() - 60);
+                this.form.sowing_date = date.toISOString().split('T')[0];
+            },
+
+            methods: {
+                async checkApiHealth() {
+                    try {
+                        const response = await axios.get('http://localhost:8000/health');
+                        this.apiHealth = response.data.status === 'healthy';
+                    } catch (error) {
+                        this.apiHealth = false;
+                        console.error('API health check failed:', error);
+                    }
+                },
+
+                async loadCropsAndVarieties() {
+                    try {
+                        const response = await axios.get('http://localhost:8000/crops');
+                        const crops = response.data.crops;
+                        this.availableCrops = crops;
+
+                        // Set default to Rice if available
+                        if (crops.Rice) {
+                            this.form.crop_type = 'Rice';
+                        }
+                    } catch (error) {
+                        this.error = 'Failed to load crop data from API';
+                        console.error('Failed to load crops:', error);
+                    }
+                },
+
+                useCurrentLocation() {
+                    if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                this.form.latitude = position.coords.latitude;
+                                this.form.longitude = position.coords.longitude;
+                                // Could lookup location name here using reverse geocoding
+                            },
+                            (error) => {
+                                this.error = 'Unable to get current location. Please enter coordinates manually.';
+                            }
+                        );
+                    } else {
+                        this.error = 'Geolocation is not supported by this browser.';
+                    }
+                },
+
+                async makePrediction() {
+                    this.loading = true;
+                    this.loadingText = 'Analyzing crop data...';
+                    this.error = null;
+                    this.success = null;
+
+                    try {
+                        // Step 1: Validate input
+                        this.loadingText = 'Validating input parameters...';
+                        const validateResponse = await axios.post('http://localhost:8000/validate', {
+                            crop_type: this.form.crop_type,
+                            variety_name: this.form.variety_name,
+                            location_name: this.form.location_name,
+                            latitude: this.form.latitude,
+                            longitude: this.form.longitude,
+                            sowing_date: this.form.sowing_date
+                        });
+
+                        if (!validateResponse.data.valid) {
+                            throw new Error(validateResponse.data.errors.join(', '));
+                        }
+
+                        // Step 2: Make prediction
+                        this.loadingText = 'Running crop yield prediction...';
+                        const predictResponse = await axios.post('http://localhost:8000/predict/yield', {
+                            crop_type: this.form.crop_type,
+                            variety_name: this.form.variety_name,
+                            location_name: this.form.location_name,
+                            latitude: this.form.latitude,
+                            longitude: this.form.longitude,
+                            sowing_date: this.form.sowing_date,
+                            use_real_time_data: this.form.use_real_time_data
+                        });
+
+                        const prediction = predictResponse.data;
+                        this.latestPrediction = prediction;
+                        this.predictions.unshift({
+                            id: prediction.prediction_id,
+                            input: prediction.input,
+                            prediction: prediction.prediction,
+                            timestamp: prediction.timestamp,
+                            error: false
+                        });
+
+                        this.success = `Prediction completed for ${prediction.input.crop_type} in ${prediction.input.location_name}`;
+                        document.getElementById('latest-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                    } catch (error) {
+                        this.error = error.response?.data?.detail || error.message;
+                        this.predictions.unshift({
+                            id: Date.now().toString(),
+                            input: { ...this.form },
+                            prediction: null,
+                            timestamp: new Date().toISOString(),
+                            error: { message: this.error }
+                        });
+                    } finally {
+                        this.loading = false;
+                        this.loadingText = '';
+                    }
+                },
+
+                clearForm() {
+                    this.form = {
+                        crop_type: this.form.crop_type, // Keep crop type
+                        variety_name: '',
+                        location_name: '',
+                        latitude: null,
+                        longitude: null,
+                        sowing_date: this.form.sowing_date,
+                        use_real_time_data: false
+                    };
+                    this.error = null;
+                    this.success = null;
+                    this.latestPrediction = null;
+                },
+
+                formatDate(isoDate) {
+                    try {
+                        return new Date(isoDate).toLocaleString();
+                    } catch {
+                        return isoDate;
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

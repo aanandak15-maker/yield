@@ -1,0 +1,13 @@
+month,predicted_yield,model,dataset
+1.0,0.44538909934794374,random_forest,patna_training
+2.0,0.4827939334354886,random_forest,patna_training
+3.0,0.5003615873016674,random_forest,patna_training
+4.0,0.49964187773160257,random_forest,patna_training
+5.0,0.49979455207787266,random_forest,patna_training
+6.0,0.45498322305937117,random_forest,patna_training
+7.0,0.378826087262484,random_forest,patna_training
+8.0,0.41828558487770723,random_forest,patna_training
+9.0,0.5470809974315363,random_forest,patna_training
+10.0,0.6356048262562897,random_forest,patna_training
+11.0,0.5777773573206771,random_forest,patna_training
+12.0,0.44500297666194677,random_forest,patna_training
