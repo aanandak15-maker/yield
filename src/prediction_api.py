@@ -63,7 +63,7 @@ class PredictionRequest(BaseModel):
 
     crop_type: str = Field(
         ..., description="Crop type (Rice, Wheat, Maize)",
-        regex="^(Rice|Wheat|Maize)$"
+        pattern="^(Rice|Wheat|Maize)$"
     )
     variety_name: str = Field(
         ..., description="Crop variety name"
