@@ -2,5 +2,5 @@
 restartPolicyType = "NEVER"
 healthcheckPath = "/health"
 healthcheckTimeout = 600
-startCommand = "uvicorn src.simple_api:app --host 0.0.0.0 --port $PORT"
+startCommand = "python src/simple_api.py"
 buildCommand = "pip install -r requirements.txt"
