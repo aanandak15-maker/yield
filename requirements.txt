@@ -1,11 +1,10 @@
-# Simplified requirements for quick deployment
+# Simplified requirements for quick deployment - no pydantic conflict
 pandas==2.0.3
 numpy==1.24.3
 
-# FastAPI only - minimal working set
+# FastAPI only - minimal working set (using compatible versions)
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
-pydantic==2.5.0
 
 # Basic dependencies
 requests==2.31.0
