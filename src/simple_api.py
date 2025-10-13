@@ -10,7 +10,7 @@ import random
 
 app = FastAPI(
     title="Crop Yield Prediction API",
-    version="1.0.0"
+    version="1.0.1"  # Force deployment
 )
 
 class PredictionRequest(BaseModel):
