@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  crop-yield-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      # For local testing, add your API keys here:
+      # - GEE_SERVICE_ACCOUNT=crop-yield-api@your-project.iam.gserviceaccount.com
+      # - GEE_PRIVATE_KEY_JSON={"type": "service_account", ...}
+      # - OPENWEATHER_API_KEY=your-api-key-here
+    volumes:
+      # Mount local files for development (optional)
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
