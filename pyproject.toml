@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "crop-yield-api"
+version = "1.0.0"
+description = "Simple Crop Yield Prediction API for Render deployment"
+requires-python = ">=3.8"
+dependencies = [
+    "pandas==2.0.3",
+    "numpy==1.24.3",
+    "fastapi==0.104.1",
+    "uvicorn[standard]==0.24.0",
+    "pydantic==2.5.0",
+    "requests==2.31.0"
+]
+
+[tool.setuptools]
+packages = ["src"]
+
+[tool.poetry]
+name = "crop-yield-api"
+version = "1.0.0"
+description = ""
+authors = []
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pandas = "2.0.3"
+numpy = "1.24.3"
+fastapi = "0.104.1"
+uvicorn = {extras = ["standard"], version = "0.24.0"}
+pydantic = "2.5.0"
+requests = "2.31.0"
