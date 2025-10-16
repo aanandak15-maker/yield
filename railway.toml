@@ -1,6 +1,5 @@
 [deploy]
-restartPolicyType = "NEVER"
+sourceDir = "."
 healthcheckPath = "/health"
 healthcheckTimeout = 600
-startCommand = "python src/prediction_api.py"
-buildCommand = "pip install -r requirements.txt"
+# Railway will auto-detect Docker and use our Dockerfile
