@@ -113,6 +113,14 @@ class CropVarietyDatabase:
         self.logger.info(f"✅ Crop variety database initialized at {db_path}")
     def _initialize_crop_data(self):
         """Initialize crop variety data for North India"""
+        # Check for reset_db flag (production database reset)
+        import os
+        if os.getenv('RESET_DB') == 'true':
+            self.logger.info("🔄 RESET_DB flag detected - dropping and recreating tables")
+            with sqlite3.connect(str(self.db_path)) as conn:
+                conn.execute('DROP TABLE IF EXISTS crop_varieties')
+                conn.commit()
+
         # Check if data already exists
         with sqlite3.connect(str(self.db_path)) as conn:
             cursor = conn.cursor()

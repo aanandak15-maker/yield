@@ -57,6 +57,15 @@ class APICredentialsManager:
                 'private_key_path': os.getenv('GEE_PRIVATE_KEY_PATH'),
                 'project_id': os.getenv('GEE_PROJECT_ID')
             }
+        elif os.getenv('GEE_PRIVATE_KEY_JSON'):
+            self.logger.info("🔑 Using GEE credentials from GEE_PRIVATE_KEY_JSON environment variable")
+            # Use environment variable content instead of file
+            self.credentials['gee'] = {
+                'service_account_email': 'crop-yield-gee-service@named-tome-472312-m3.iam.gserviceaccount.com',
+                'private_key_path': None,  # Will handle in initialize_gee
+                'private_key_content': os.getenv('GEE_PRIVATE_KEY_JSON'),  # Store JSON content
+                'project_id': 'named-tome-472312-m3'
+            }
 
         # OpenWeather API
         if os.getenv('OPENWEATHER_API_KEY'):
@@ -148,21 +157,38 @@ class APICredentialsManager:
         """Initialize Google Earth Engine with credentials"""
         try:
             import ee
+            import tempfile
+            import json
 
             gee_creds = self.get_gee_credentials()
 
-            # Check if private key file exists
-            key_path = Path(gee_creds['private_key_path'])
-            if not key_path.exists():
-                raise FileNotFoundError(f"GEE private key file not found: {key_path}")
+            # Handle JSON content from environment variable (production)
+            if gee_creds.get('private_key_content'):
+                self.logger.info("🔑 Using GEE credentials from environment variable JSON content")
+                # Parse the JSON content and create temporary credentials
+                key_data = json.loads(gee_creds['private_key_content'])
+                credentials = ee.ServiceAccountCredentials.from_p12_keystring(
+                    key_data['client_email'],
+                    key_data['private_key'],
+                    project=key_data['project_id']
+                )
 
-            # Initialize Earth Engine
-            credentials = ee.ServiceAccountCredentials(
-                gee_creds['service_account_email'],
-                str(key_path)
-            )
+            # Handle file-based credentials (development)
+            elif gee_creds.get('private_key_path'):
+                # Check if private key file exists
+                key_path = Path(gee_creds['private_key_path'])
+                if not key_path.exists():
+                    raise FileNotFoundError(f"GEE private key file not found: {key_path}")
 
-            ee.Initialize(credentials, project=gee_creds['project_id'])
+                # Initialize Earth Engine
+                credentials = ee.ServiceAccountCredentials(
+                    gee_creds['service_account_email'],
+                    str(key_path)
+                )
+            else:
+                raise ValueError("No GEE private key source found (neither file nor environment variable)")
+
+            ee.Initialize(credentials, project=gee_creds.get('project_id', 'named-tome-472312-m3'))
             self.logger.info("✅ Google Earth Engine initialized")
 
             return True
