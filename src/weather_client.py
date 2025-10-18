@@ -60,9 +60,9 @@ class OpenWeatherClient:
             ow_creds = credentials_manager.get_openweather_credentials()
             self._api_key = ow_creds['api_key']
 
-            except Exception as e:
-                self.logger.error(f"Failed to get API key: {e}")
-                raise
+        except Exception as e:
+            self.logger.error(f"Failed to get API key: {e}")
+            raise
 
         return self._api_key
 
