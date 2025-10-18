@@ -1,0 +1,13 @@
+month,predicted_yield,model,dataset
+1.0,-30689893.288005374,ridge,north_india_regional
+2.0,-41726975.85074079,ridge,north_india_regional
+3.0,-59339518.34197021,ridge,north_india_regional
+4.0,-69420703.56531247,ridge,north_india_regional
+5.0,-69099717.36759157,ridge,north_india_regional
+6.0,-46172860.08258174,ridge,north_india_regional
+7.0,-16240455.328062182,ridge,north_india_regional
+8.0,-13383523.418178512,ridge,north_india_regional
+9.0,-22154238.4225416,ridge,north_india_regional
+10.0,-31721565.54071582,ridge,north_india_regional
+11.0,-35031917.66682997,ridge,north_india_regional
+12.0,-26003156.368465554,ridge,north_india_regional

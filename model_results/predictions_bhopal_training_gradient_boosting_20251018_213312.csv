@@ -1,0 +1,13 @@
+month,predicted_yield,model,dataset
+1.0,0.47552573487338157,gradient_boosting,bhopal_training
+2.0,0.4837327752798404,gradient_boosting,bhopal_training
+3.0,0.4844357999887615,gradient_boosting,bhopal_training
+4.0,0.5032938501802522,gradient_boosting,bhopal_training
+5.0,0.5068269919490234,gradient_boosting,bhopal_training
+6.0,0.45591463968272894,gradient_boosting,bhopal_training
+7.0,0.37303330179355676,gradient_boosting,bhopal_training
+8.0,0.4295096289518542,gradient_boosting,bhopal_training
+9.0,0.5564948225294738,gradient_boosting,bhopal_training
+10.0,0.6370950221519848,gradient_boosting,bhopal_training
+11.0,0.5531028289993557,gradient_boosting,bhopal_training
+12.0,0.47241991010683276,gradient_boosting,bhopal_training

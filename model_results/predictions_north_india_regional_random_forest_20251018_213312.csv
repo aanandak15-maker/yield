@@ -1,0 +1,13 @@
+month,predicted_yield,model,dataset
+1.0,0.4459197424661952,random_forest,north_india_regional
+2.0,0.4827939334354886,random_forest,north_india_regional
+3.0,0.5000696503857853,random_forest,north_india_regional
+4.0,0.4997941847015476,random_forest,north_india_regional
+5.0,0.4996421522130238,random_forest,north_india_regional
+6.0,0.4549123107480183,random_forest,north_india_regional
+7.0,0.37816353922380963,random_forest,north_india_regional
+8.0,0.41448838474883437,random_forest,north_india_regional
+9.0,0.5470809974315363,random_forest,north_india_regional
+10.0,0.6345508382222078,random_forest,north_india_regional
+11.0,0.5777773573206771,random_forest,north_india_regional
+12.0,0.4454952588762411,random_forest,north_india_regional
