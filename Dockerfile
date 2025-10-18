@@ -24,8 +24,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Create virtual environment with consistent seed
-RUN python -m venv /opt/venv --seed 42
+# Create virtual environment
+RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install pip tools and ML libraries with exact versions
