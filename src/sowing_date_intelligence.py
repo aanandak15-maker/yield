@@ -32,25 +32,50 @@ class SowingDateIntelligence:
         self._initialize_sowing_data()
 
     def _load_config(self):
-        """Load configuration (handle missing config file)"""
-        try:
-            with open(self.config_path, 'r') as f:
-                config = json.load(f)
-            self.db_config = config.get('storage', {})
-            self.region_config = config.get('north_india_region', {})
-        except Exception as e:
-            self.logger.warning(f"Config file not found, using defaults: {e}")
-            # Set default configurations for production deployment
-            self.db_config = {'database_path': 'data/database/crop_prediction.db'}
-            self.region_config = {
-                'states': [
-                    {'name': 'Punjab', 'lat': 30.7333, 'lon': 76.7794},
-                    {'name': 'Haryana', 'lat': 29.0588, 'lon': 76.0856},
-                    {'name': 'UP', 'lat': 26.8467, 'lon': 80.9462},
-                    {'name': 'Bihar', 'lat': 25.0961, 'lon': 85.3131},
-                    {'name': 'MP', 'lat': 23.2599, 'lon': 77.4126}
-                ]
-            }
+        """Load configuration with multiple path fallbacks for production"""
+        # Try multiple config file locations
+        config_paths = [
+            self.config_path,  # Original path (e.g., '../config/api_config.json')
+            'config/api_config.json',  # Direct from app root
+            '/app/config/api_config.json',  # Docker absolute path
+            'config/demo_config.json',  # Fallback to demo config
+            '/app/config/demo_config.json',  # Docker demo config
+        ]
+
+        current_dir = os.path.dirname(__file__)
+
+        for config_file in config_paths:
+            # Resolve relative paths
+            if not os.path.isabs(config_file):
+                config_file = os.path.join(current_dir, config_file)
+
+            # Also try from parent directory if relative
+            if not os.path.isabs(config_file) and config_file.startswith('..'):
+                config_file = os.path.join(current_dir, config_file)
+
+            try:
+                if os.path.exists(config_file):
+                    with open(config_file, 'r') as f:
+                        config = json.load(f)
+                    self.db_config = config.get('storage', {})
+                    self.region_config = config.get('north_india_region', {})
+                    self.logger.info(f"Config loaded successfully from: {config_file}")
+                    return
+            except Exception as e:
+                continue  # Try next path
+
+        # If all paths fail, use production defaults (no warning needed)
+        self.logger.info("Using production default configuration")
+        self.db_config = {'database_path': 'data/database/crop_prediction.db'}
+        self.region_config = {
+            'states': [
+                {'name': 'Punjab', 'lat': 30.7333, 'lon': 76.7794},
+                {'name': 'Haryana', 'lat': 29.0588, 'lon': 76.0856},
+                {'name': 'UP', 'lat': 26.8467, 'lon': 80.9462},
+                {'name': 'Bihar', 'lat': 25.0961, 'lon': 85.3131},
+                {'name': 'MP', 'lat': 23.2599, 'lon': 77.4126}
+            ]
+        }
 
     def _setup_database(self):
         """Set up SQLite database for sowing date data"""
