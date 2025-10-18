@@ -10,6 +10,9 @@ Endpoints:
 - GET /health: Service health check
 - GET /crops: Available crops and varieties
 - POST /validate: Input validation
+- POST /predict/field-analysis: Field analysis with polygon coordinates
+
+Fixed: Real-time data collection and endpoint deployment issues
 """
 
 import os
