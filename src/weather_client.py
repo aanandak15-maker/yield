@@ -4,6 +4,8 @@ OpenWeather API Client for Crop Yield Prediction
 
 Retrieves weather data including temperature, precipitation, humidity,
 and wind data for agricultural weather monitoring and yield prediction.
+
+Fixed: Syntax error in _get_api_key method - deployment ready
 """
 
 import requests
@@ -49,20 +51,21 @@ class OpenWeatherClient:
         """Get OpenWeather API key"""
         if self._api_key is None:
             try:
-                from .api_credentials import get_credentials_manager
-            except ImportError:
-                from api_credentials import get_credentials_manager
+                try:
+                    from .api_credentials import get_credentials_manager
+                except ImportError:
+                    from api_credentials import get_credentials_manager
 
-            credentials_manager = get_credentials_manager()
-            if not credentials_manager.load_credentials():
-                raise RuntimeError("Failed to load credentials")
+                credentials_manager = get_credentials_manager()
+                if not credentials_manager.load_credentials():
+                    raise RuntimeError("Failed to load credentials")
 
-            ow_creds = credentials_manager.get_openweather_credentials()
-            self._api_key = ow_creds['api_key']
+                ow_creds = credentials_manager.get_openweather_credentials()
+                self._api_key = ow_creds['api_key']
 
-        except Exception as e:
-            self.logger.error(f"Failed to get API key: {e}")
-            raise
+            except Exception as e:
+                self.logger.error(f"Failed to get API key: {e}")
+                raise
 
         return self._api_key
 
