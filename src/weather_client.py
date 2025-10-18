@@ -50,13 +50,15 @@ class OpenWeatherClient:
         if self._api_key is None:
             try:
                 from .api_credentials import get_credentials_manager
+            except ImportError:
+                from api_credentials import get_credentials_manager
 
-                credentials_manager = get_credentials_manager()
-                if not credentials_manager.load_credentials():
-                    raise RuntimeError("Failed to load credentials")
+            credentials_manager = get_credentials_manager()
+            if not credentials_manager.load_credentials():
+                raise RuntimeError("Failed to load credentials")
 
-                ow_creds = credentials_manager.get_openweather_credentials()
-                self._api_key = ow_creds['api_key']
+            ow_creds = credentials_manager.get_openweather_credentials()
+            self._api_key = ow_creds['api_key']
 
             except Exception as e:
                 self.logger.error(f"Failed to get API key: {e}")

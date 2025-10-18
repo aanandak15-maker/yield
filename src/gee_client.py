@@ -48,7 +48,10 @@ class GEEClient:
         """Initialize Google Earth Engine"""
         try:
             # Import credentials manager and initialize GEE
-            from .api_credentials import get_credentials_manager
+            try:
+                from .api_credentials import get_credentials_manager
+            except ImportError:
+                from api_credentials import get_credentials_manager
 
             credentials_manager = get_credentials_manager()
             if not credentials_manager.load_credentials():

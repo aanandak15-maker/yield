@@ -215,7 +215,10 @@ class UnifiedDataPipeline:
     ) -> pd.DataFrame:
         """Collect satellite data using GEE client"""
         try:
-            from .gee_client import GEEClient
+            try:
+                from .gee_client import GEEClient
+            except ImportError:
+                from gee_client import GEEClient
 
             gee_client = GEEClient()
 
@@ -254,7 +257,10 @@ class UnifiedDataPipeline:
     ) -> pd.DataFrame:
         """Collect weather data using OpenWeather client"""
         try:
-            from .weather_client import OpenWeatherClient
+            try:
+                from .weather_client import OpenWeatherClient
+            except ImportError:
+                from weather_client import OpenWeatherClient
 
             weather_client = OpenWeatherClient()
 
