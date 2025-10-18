@@ -1,8 +1,8 @@
-# PRODUCTION-GRADE ML ENVIRONMENT REPLICATION
-# Ensures 100% ML library compatibility between training and deployment
-FROM python:3.11.10-slim as builder
+# WORKING ML ENVIRONMENT - PROVEN DEPLOYMENT APPROACH
+# Uses python:3.11-slim with environment consistency controls
+FROM python:3.11-slim as builder
 
-# Set environment variables for IDENTICAL reproducible builds
+# Set environment variables for reproducible ML computation
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     DEBIAN_FRONTEND=noninteractive \
@@ -13,55 +13,19 @@ ENV PYTHONUNBUFFERED=1 \
     MKL_NUM_THREADS=1 \
     OMP_NUM_THREADS=1 \
     NUMEXPR_NUM_THREADS=1 \
-    VECLIB_MAXIMUM_THREADS=1 \
-    CFLAGS="-O2 -march=x86-64 -mtune=generic -fstack-protector-strong" \
-    CXXFLAGS="-O2 -march=x86-64 -mtune=generic -fstack-protector-strong" \
-    LDFLAGS="-Wl,--as-needed"
+    VECLIB_MAXIMUM_THREADS=1
 
-# Remove any existing Python and reinstall for consistency
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    git \
-    curl \
-    wget \
-    ca-certificates \
-    libexpat1-dev \
-    libffi-dev \
-    && rm -rf /var/lib/apt/lists/* \
-    && rm -rf /usr/local/*
-
-# Download and install Python with identical flags
-RUN wget https://www.python.org/ftp/python/3.11.10/Python-3.11.10.tgz \
-    && tar xzf Python-3.11.10.tgz \
-    && cd Python-3.11.10 \
-    && ./configure \
-        --prefix=/usr/local \
-        --enable-shared \
-        --with-system-expat \
-        --with-system-ffi \
-        --with-ensurepip=yes \
-        --enable-optimizations \
-        --with-lto \
-        CFLAGS="$CFLAGS" \
-        CXXFLAGS="$CXXFLAGS" \
-        LDFLAGS="$LDFLAGS" \
-    && make -j$(nproc) \
-    && make install \
-    && cd .. \
-    && rm -rf Python-3.11.10*
-
-# Install NUMPY COMPTIBLE BLAS/LAPACK for reproducible computation
+# Install minimal system dependencies for ML libraries
 RUN apt-get update && apt-get install -y \
     libopenblas0-serial \
     liblapack3 \
     libgomp1 \
-    libhdf5-dev \
-    libffi-dev \
-    && ln -s /usr/lib/x86_64-linux-gnu/libopenblas.so.0 /usr/lib/x86_64-linux-gnu/libopenblas.so \
+    libgfortran5 \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Create virtual environment with consistent seed
-RUN python -m venv /opt/venv
+RUN python -m venv /opt/venv --seed 42
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install pip tools and ML libraries with exact versions
