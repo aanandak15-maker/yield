@@ -22,6 +22,8 @@ RUN apt-get update && apt-get install -y \
     libgomp1 \
     libgfortran5 \
     curl \
+    gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
 # Create virtual environment
@@ -38,7 +40,7 @@ RUN pip install --upgrade pip==23.3.1 wheel==0.42.0 && \
         pandas==1.5.3 \
         joblib==1.3.2 && \
     pip install xgboost==1.7.6 --no-deps && \
-    pip install -r requirements.txt
+    pip install -r requirements.txt --no-cache-dir
 
 # Production stage
 FROM python:3.11-slim
@@ -64,11 +66,11 @@ COPY --from=builder /opt/venv /opt/venv
 COPY crop_yield_climate_soil_data_2019_2023.csv .
 COPY models/ ./models/
 
-# Create initial environment fingerprint BEFORE model training
-RUN python src/production_environment_guard.py
-
 # Copy application code
 COPY . .
+
+# Create initial environment fingerprint BEFORE model training
+RUN python src/production_environment_guard.py
 
 # Enforce production environment compatibility (may retrain models)
 RUN python src/production_environment_guard.py
@@ -90,4 +92,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
 # Default command
-CMD ["python", "src/prediction_api.py"]
+CMD ["python", "run_api.py"]

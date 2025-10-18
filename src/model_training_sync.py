@@ -11,7 +11,7 @@ Usage: python src/model_training_sync.py
 import os
 import sys
 import json
-import pickle
+import joblib
 import logging
 from pathlib import Path
 from datetime import datetime
@@ -176,15 +176,16 @@ class ModelTrainingSync:
                     model_filename = f"{location}_{model_name}_{timestamp}.pkl"
                     model_path = self.models_dir / model_filename
 
-                    with open(model_path, 'wb') as f:
-                        pickle.dump({
-                            'model': pipeline,
-                            'features': data['features'],
-                            'target': data['target'],
-                            'environment': 'production',
-                            'version': '1.0.0',
-                            'timestamp': timestamp
-                        }, f)
+                    model_data = {
+                        'model': pipeline,
+                        'features': data['features'],
+                        'target': data['target'],
+                        'environment': 'production',
+                        'version': '1.0.0',
+                        'timestamp': timestamp
+                    }
+                    # Use joblib for better cross-platform compatibility
+                    joblib.dump(model_data, model_path)
 
                     logger.info(f"  ✅ Saved {model_name} model: {model_filename}")
 

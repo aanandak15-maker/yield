@@ -11,7 +11,7 @@ Used during Docker build process to guarantee model compatibility.
 
 import os
 import sys
-import pickle
+import joblib
 import logging
 import pandas as pd
 import numpy as np
@@ -170,9 +170,9 @@ class ModelCompatibilityValidator:
     def _validate_single_model(self, model_path: Path, sample_data: Dict[str, float]) -> bool:
         """Test if a single model can be loaded and make predictions"""
         try:
-            # Load model
-            with open(model_path, 'rb') as f:
-                model = pickle.load(f)
+            # Load model using joblib for better compatibility
+            model_data = joblib.load(model_path)
+            model = model_data['model'] if isinstance(model_data, dict) else model_data
 
             # Prepare features in expected order
             feature_cols = [

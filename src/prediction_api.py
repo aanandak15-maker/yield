@@ -19,7 +19,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any, Union
 from pathlib import Path
 import traceback
-import pickle
+import joblib
 import pandas as pd
 import numpy as np
 
@@ -191,8 +191,9 @@ class CropYieldPredictionService:
         total_loaded = 0
         for model_key, info in model_mapping.items():
             try:
-                with open(info['path'], 'rb') as f:
-                    model = pickle.load(f)
+                # Use joblib for better cross-platform compatibility
+                model_data = joblib.load(info['path'])
+                model = model_data['model'] if isinstance(model_data, dict) else model_data
 
                 location_name = info['location']
                 if location_name not in self.location_models:

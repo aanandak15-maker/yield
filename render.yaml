@@ -6,4 +6,7 @@ services:
     envVars:
       - key: ENVIRONMENT
         value: production
+      - key: PYTHONPATH
+        value: /app
     plan: starter
+    healthCheckPath: /health
