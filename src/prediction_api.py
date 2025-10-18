@@ -736,6 +736,9 @@ class CropYieldPredictionService:
         try:
             # Prepare feature vector
             feature_vector = []
+            self.logger.info(f"Available features keys: {list(features.keys())}")
+            self.logger.info(f"Expected feature columns: {self.feature_columns}")
+            
             for col in self.feature_columns:
                 value = features.get(col, 0.0)
                 # Ensure numeric values
@@ -747,7 +750,7 @@ class CropYieldPredictionService:
             # Make prediction
             X = np.array([feature_vector])
             self.logger.info(f"Feature vector length: {len(feature_vector)}, Expected: {len(self.feature_columns)}")
-            self.logger.info(f"Feature columns: {self.feature_columns}")
+            self.logger.info(f"Feature vector values: {feature_vector}")
             y_pred = model.predict(X)[0]
 
             # Calculate confidence interval (simple approach)
