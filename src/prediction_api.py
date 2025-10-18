@@ -209,9 +209,15 @@ class CropYieldPredictionService:
                     'path': info['path']
                 }
                 total_loaded += 1
+                self.logger.info(f"✅ Successfully loaded model: {model_key}")
 
             except Exception as e:
                 self.logger.warning(f"Failed to load model {model_key}: {e}")
+                # Log specific error types for debugging
+                if 'numpy._core' in str(e):
+                    self.logger.warning(f"  → NumPy version compatibility issue for {model_key}")
+                elif '_loss' in str(e):
+                    self.logger.warning(f"  → XGBoost version compatibility issue for {model_key}")
                 # Continue with fallback logic for individual model failures
 
         # If no models loaded successfully, use fallbacks
