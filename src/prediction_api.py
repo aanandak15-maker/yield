@@ -332,12 +332,18 @@ class CropYieldPredictionService:
 
     def _setup_feature_mappings(self):
         """Set up feature mappings for model input"""
-        # Based on the original Phase 4 feature engineering - reduced to 15 features to match trained models
+        # Based on the original Phase 4 feature engineering - match the training feature sets
         self.feature_columns = [
-            'NDVI', 'EVI', 'surface_temp', 'chirps_precipitation',
-            'temp', 'temp_min', 'temp_max', 'humidity', 'wind_speed',
-            'pressure', 'clouds', 'total_rain', 'gdd_daily', 'heat_stress',
-            'cold_stress'
+            # Basic weather features (6)
+            'temp_max', 'temp_min', 'temp_mean', 'precipitation', 'humidity', 'solar_radiation',
+            # Derived features (5) 
+            'temp_range', 'gdd', 'precipitation_7d_sum', 'heat_stress_days', 'water_availability_index',
+            # Seasonal features (3)
+            'is_kharif_season', 'is_rabi_season', 'is_zaid_season',
+            # Vegetation indices (3)
+            'Fpar', 'NDVI', 'Lai',
+            # Soil features (1)
+            'soil_ph'
         ]
 
         # Regional mappings - best model for each region
@@ -647,45 +653,66 @@ class CropYieldPredictionService:
         features = {}
 
         try:
-            # Aggregate satellite data (last 30 days average)
+            # Get current month for seasonal features
+            current_month = datetime.now().month
+            
+            # Aggregate satellite data (vegetation indices)
             if not satellite_data.empty:
                 features.update({
+                    'Fpar': satellite_data.get('fpar', [0.4]).mean(),
                     'NDVI': satellite_data['ndvi'].mean() if 'ndvi' in satellite_data.columns else 0.4,
-                    'EVI': satellite_data['evi'].mean() if 'evi' in satellite_data.columns else 0.35,
-                    'surface_temp': satellite_data['surface_temp'].mean() if 'surface_temp' in satellite_data.columns else 25,
-                    'chirps_precipitation': satellite_data['chirps_precipitation'].mean() if 'chirps_precipitation' in satellite_data.columns else 3.0
+                    'Lai': satellite_data.get('lai', [2.0]).mean()
                 })
             else:
                 features.update({
-                    'NDVI': 0.4, 'EVI': 0.35, 'surface_temp': 25, 'chirps_precipitation': 3.0
+                    'Fpar': 0.4, 'NDVI': 0.4, 'Lai': 2.0
                 })
 
-            # Aggregate weather data (only the 15 features needed for trained models)
+            # Aggregate weather data (basic weather features)
             if not weather_data.empty:
+                temp_max = weather_data['temp_max'].max() if 'temp_max' in weather_data.columns else 34
+                temp_min = weather_data['temp_min'].min() if 'temp_min' in weather_data.columns else 22
+                temp_mean = weather_data['temp'].mean() if 'temp' in weather_data.columns else 28
+                precipitation = weather_data.get('total_rain', [3.0]).mean()
+                humidity = weather_data['humidity'].mean() if 'humidity' in weather_data.columns else 65
+                
                 features.update({
-                    'temp': weather_data['temp'].mean() if 'temp' in weather_data.columns else 28,
-                    'temp_min': weather_data['temp_min'].min() if 'temp_min' in weather_data.columns else 22,
-                    'temp_max': weather_data['temp_max'].max() if 'temp_max' in weather_data.columns else 34,
-                    'humidity': weather_data['humidity'].mean() if 'humidity' in weather_data.columns else 65,
-                    'wind_speed': weather_data['wind_speed'].mean() if 'wind_speed' in weather_data.columns else 2.5,
-                    'pressure': weather_data['pressure'].mean() if 'pressure' in weather_data.columns else 1013,
-                    'clouds': weather_data['clouds'].mean() if 'clouds' in weather_data.columns else 50,
-                    'total_rain': weather_data.get('total_rain', features['chirps_precipitation'])
+                    'temp_max': temp_max,
+                    'temp_min': temp_min,
+                    'temp_mean': temp_mean,
+                    'precipitation': precipitation,
+                    'humidity': humidity,
+                    'solar_radiation': weather_data.get('solar_radiation', [20.0]).mean()
                 })
 
-                # Add agricultural indices if available (only the ones needed)
+                # Derived features
                 features.update({
-                    'gdd_daily': weather_data.get('gdd_daily', [12]).mean(),
-                    'heat_stress': weather_data.get('heat_stress', [0]).sum(),
-                    'cold_stress': weather_data.get('cold_stress', [0]).sum()
+                    'temp_range': temp_max - temp_min,
+                    'gdd': max(0, temp_mean - 10),  # Growing degree days
+                    'precipitation_7d_sum': precipitation * 7,  # Approximate 7-day sum
+                    'heat_stress_days': 1 if temp_max > 35 else 0,
+                    'water_availability_index': min(1.0, precipitation / 10.0)
                 })
             else:
+                # Default values
                 features.update({
-                    'temp': 28, 'temp_min': 22, 'temp_max': 34, 'humidity': 65,
-                    'wind_speed': 2.5, 'pressure': 1013, 'clouds': 50,
-                    'total_rain': features['chirps_precipitation'],
-                    'gdd_daily': 12, 'heat_stress': 0, 'cold_stress': 0
+                    'temp_max': 34, 'temp_min': 22, 'temp_mean': 28,
+                    'precipitation': 3.0, 'humidity': 65, 'solar_radiation': 20.0,
+                    'temp_range': 12, 'gdd': 18, 'precipitation_7d_sum': 21.0,
+                    'heat_stress_days': 0, 'water_availability_index': 0.3
                 })
+
+            # Seasonal features
+            features.update({
+                'is_kharif_season': 1 if current_month in [6, 7, 8, 9, 10, 11] else 0,
+                'is_rabi_season': 1 if current_month in [10, 11, 12, 1, 2, 3] else 0,
+                'is_zaid_season': 1 if current_month in [4, 5] else 0
+            })
+
+            # Soil features (default values)
+            features.update({
+                'soil_ph': 7.0  # Neutral pH
+            })
 
         except Exception as e:
             self.logger.error(f"Failed to prepare features: {e}")
