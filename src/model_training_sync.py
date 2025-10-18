@@ -42,7 +42,7 @@ class ModelTrainingSync:
         logger.info("🔄 Starting model training synchronization...")
 
         # Check if models already exist and are compatible
-        from src.model_compatibility_validator import ModelCompatibilityValidator
+        from model_compatibility_validator import ModelCompatibilityValidator
         validator = ModelCompatibilityValidator()
 
         success, results = validator.validate_all_models()

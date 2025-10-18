@@ -70,10 +70,10 @@ COPY models/ ./models/
 COPY . .
 
 # Create initial environment fingerprint BEFORE model training
-RUN python src/production_environment_guard.py
+RUN cd /app && python src/production_environment_guard.py
 
 # Enforce production environment compatibility (may retrain models)
-RUN python src/production_environment_guard.py
+RUN cd /app && python src/production_environment_guard.py
 
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash app && \
