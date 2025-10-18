@@ -172,10 +172,21 @@ class CropYieldPredictionService:
             filename = model_file.stem
             parts = filename.split('_')
 
-            if len(parts) >= 4:
+            if len(parts) >= 5:  # Need at least 5 parts: location_location_algorithm_algorithm_timestamp
                 location = '_'.join(parts[:2])  # e.g., 'bhopal_training'
-                algorithm = parts[2]  # 'gradient_boosting', 'random_forest', 'ridge'
-                timestamp = parts[3]
+                
+                # Handle different algorithm naming patterns
+                if 'gradient_boosting' in filename:
+                    algorithm = 'gradient_boosting'
+                elif 'random_forest' in filename:
+                    algorithm = 'random_forest'
+                elif 'ridge' in filename:
+                    algorithm = 'ridge'
+                else:
+                    continue
+                
+                # Extract timestamp (last two parts)
+                timestamp = '_'.join(parts[-2:])
 
                 # Store model info
                 model_key = f"{location}_{algorithm}"
