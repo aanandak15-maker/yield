@@ -175,7 +175,11 @@ class APICredentialsManager:
                 self.logger.info("🔑 Using GEE credentials from GEE_PRIVATE_KEY_JSON environment variable")
                 # Parse the JSON content and create temporary credentials
                 try:
-                    key_data = json.loads(gee_json)
+                    # Clean up the JSON string - remove any extra whitespace/newlines
+                    gee_json_clean = gee_json.strip()
+                    self.logger.info(f"🔍 Cleaned JSON length: {len(gee_json_clean)}")
+                    
+                    key_data = json.loads(gee_json_clean)
                     self.logger.info(f"✅ Parsed GEE credentials for project: {key_data.get('project_id', 'unknown')}")
                     
                     # Write private key to temporary file for GEE SDK
