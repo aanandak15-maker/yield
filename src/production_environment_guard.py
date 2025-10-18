@@ -25,6 +25,7 @@ class ProductionEnvironmentGuard:
 
     def __init__(self):
         self.project_root = Path(__file__).parent.parent
+        self.models_dir = self.project_root / 'models'
         self.cache_file = self.project_root / '.env_cache.json'
 
     def create_environment_fingerprint(self) -> str:

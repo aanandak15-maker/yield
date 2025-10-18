@@ -59,11 +59,15 @@ class APICredentialsManager:
             }
         elif os.getenv('GEE_PRIVATE_KEY_JSON'):
             self.logger.info("🔑 Using GEE credentials from GEE_PRIVATE_KEY_JSON environment variable")
+            gee_json = os.getenv('GEE_PRIVATE_KEY_JSON')
+            self.logger.info(f"🔍 GEE_PRIVATE_KEY_JSON length: {len(gee_json)} characters")
+            self.logger.info(f"🔍 GEE_PRIVATE_KEY_JSON starts with: {gee_json[:50]}...")
+            
             # Use environment variable content instead of file
             self.credentials['gee'] = {
                 'service_account_email': 'crop-yield-gee-service@named-tome-472312-m3.iam.gserviceaccount.com',
                 'private_key_path': None,  # Will handle in initialize_gee
-                'private_key_content': os.getenv('GEE_PRIVATE_KEY_JSON'),  # Store JSON content
+                'private_key_content': gee_json,  # Store JSON content
                 'project_id': 'named-tome-472312-m3'
             }
 
@@ -172,6 +176,8 @@ class APICredentialsManager:
                 # Parse the JSON content and create temporary credentials
                 try:
                     key_data = json.loads(gee_json)
+                    self.logger.info(f"✅ Parsed GEE credentials for project: {key_data.get('project_id', 'unknown')}")
+                    
                     # Write private key to temporary file for GEE SDK
                     with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as temp_file:
                         json.dump(key_data, temp_file)
@@ -182,10 +188,19 @@ class APICredentialsManager:
                         key_data.get('client_email', 'crop-yield-gee-service@named-tome-472312-m3.iam.gserviceaccount.com'),
                         temp_key_file
                     )
+                    
+                    # Initialize EE with credentials
+                    ee.Initialize(credentials)
+                    self.logger.info("✅ Google Earth Engine initialized successfully")
+                    return True
 
                 except json.JSONDecodeError as e:
                     self.logger.error(f"❌ Failed to parse GEE_PRIVATE_KEY_JSON: {e}")
+                    self.logger.error(f"❌ JSON content preview: {gee_json[:100]}...")
                     raise ValueError("Invalid GEE_PRIVATE_KEY_JSON format")
+                except Exception as e:
+                    self.logger.error(f"❌ Failed to initialize GEE with environment credentials: {e}")
+                    raise
 
             else:
                 # Fallback to file-based credentials for development
