@@ -356,6 +356,9 @@ class CropYieldPredictionService:
             if growth_days < 30:
                 self.logger.warning(f"Early stage growth: only {growth_days} days from sowing")
 
+            # Initialize data collection result
+            data_collection_result = {'success': False, 'data_freshness_hours': 0, 'data_quality_score': 0.0}
+            
             # Collect real-time data if requested
             if request_data['use_real_time_data']:
                 data_collection_result = self._collect_real_time_data(
