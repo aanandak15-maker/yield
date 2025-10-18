@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: crop-yield-prediction-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+    plan: starter
