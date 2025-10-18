@@ -1,19 +1,28 @@
-# Railway Deployment - Full ML Stack
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-pydantic==2.11.7
-python-multipart==0.0.6
+# Render Production - Full ML Stack with Compatibility Constraints
 
-# Machine Learning Dependencies
-scikit-learn==1.3.0
-numpy==1.24.3
-pandas==2.0.3
-joblib==1.3.0
+# Web Framework
+fastapi>=0.104.0,<1.0.0
+uvicorn[standard]>=0.24.0,<0.25.0
+pydantic>=2.11.0,<3.0.0
+python-multipart>=0.0.6
+
+# Machine Learning Dependencies with Compatibility Constraints
+scikit-learn>=1.3.0,<1.5.0  # Compatible versions
+numpy>=1.24.0,<2.0.0       # Compatible with scikit-learn
+pandas>=1.5.0,<2.1.0       # Compatible versions
+joblib>=1.3.0,<1.4.0       # Compatible versions
+
+# XGBoost (Required for gradient boosting models)
+xgboost>=1.7.0,<2.1.0      # Compatible versions
 
 # API Client Dependencies
-requests==2.31.0
-earthengine-api==0.1.389
+requests>=2.31.0,<3.0.0
+earthengine-api>=0.1.389,<0.2.0
 
-# Additional Libraries (from expanded requirements)
-flask==3.0.0
-flask-cors==4.0.0
+# Additional Libraries
+flask>=3.0.0,<4.0.0
+flask-cors>=4.0.0,<5.0.0
+
+# Data Science Extensions
+matplotlib>=3.6.0,<4.0.0
+seaborn>=0.12.0,<1.0.0

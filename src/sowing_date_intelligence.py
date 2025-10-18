@@ -32,16 +32,25 @@ class SowingDateIntelligence:
         self._initialize_sowing_data()
 
     def _load_config(self):
-        """Load configuration"""
+        """Load configuration (handle missing config file)"""
         try:
             with open(self.config_path, 'r') as f:
                 config = json.load(f)
             self.db_config = config.get('storage', {})
             self.region_config = config.get('north_india_region', {})
         except Exception as e:
-            self.logger.error(f"Failed to load config: {e}")
-            self.db_config = {}
-            self.region_config = {}
+            self.logger.warning(f"Config file not found, using defaults: {e}")
+            # Set default configurations for production deployment
+            self.db_config = {'database_path': 'data/database/crop_prediction.db'}
+            self.region_config = {
+                'states': [
+                    {'name': 'Punjab', 'lat': 30.7333, 'lon': 76.7794},
+                    {'name': 'Haryana', 'lat': 29.0588, 'lon': 76.0856},
+                    {'name': 'UP', 'lat': 26.8467, 'lon': 80.9462},
+                    {'name': 'Bihar', 'lat': 25.0961, 'lon': 85.3131},
+                    {'name': 'MP', 'lat': 23.2599, 'lon': 77.4126}
+                ]
+            }
 
     def _setup_database(self):
         """Set up SQLite database for sowing date data"""
