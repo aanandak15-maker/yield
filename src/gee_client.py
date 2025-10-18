@@ -130,8 +130,10 @@ class GEEClient:
         # Merge all data types
         if satellite_data:
             result_df = self._merge_satellite_datasets(satellite_data, latitude, longitude)
+            self.logger.info(f"✅ Successfully collected satellite data: {len(result_df)} records")
             return result_df
         else:
+            self.logger.warning(f"⚠️ No satellite data collected for location ({latitude}, {longitude}) in date range {start_date} to {end_date}")
             return pd.DataFrame()
 
     def _get_modis_ndvi(self, point: ee.Geometry, start_date: str, end_date: str) -> pd.DataFrame:
