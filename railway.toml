@@ -1,5 +1,0 @@
-[deploy]
-sourceDir = "."
-healthcheckPath = "/health"
-healthcheckTimeout = 600
-# Railway will auto-detect Docker and use our Dockerfile
