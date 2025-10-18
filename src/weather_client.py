@@ -573,10 +573,11 @@ def test_weather_client():
         print(f"📍 Testing current weather for Bhopal ({lat}, {lon})")
         current_weather = client.get_current_weather(lat, lon)
         print("✅ Current weather retrieved successfully")
-        print(".2f")
+        if 'main' in current_weather and 'temp' in current_weather['main']:
+            print(f"Temperature: {current_weather['main']['temp']:.2f}°C")
 
     except Exception as e:
-        print(".2f")
+        print(f"❌ Weather client test failed: {e}")
         return
 
     try:
