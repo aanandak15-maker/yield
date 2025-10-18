@@ -115,53 +115,79 @@ class CropVarietyDatabase:
         """Initialize crop variety data for North India"""
         # Check for reset_db flag (production database reset)
         import os
-        if os.getenv('RESET_DB') == 'true':
-            self.logger.info("🔄 RESET_DB flag detected - dropping and recreating tables")
+        reset_db = os.getenv('RESET_DB') == 'true'
+
+        try:
             with sqlite3.connect(str(self.db_path)) as conn:
-                conn.execute('DROP TABLE IF EXISTS crop_varieties')
-                conn.commit()
+                cursor = conn.cursor()
 
-        # Check if data already exists
-        with sqlite3.connect(str(self.db_path)) as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT COUNT(*) FROM crop_varieties")
-            count = cursor.fetchone()[0]
+                # Handle table reset if needed
+                if reset_db:
+                    self.logger.info("🔄 RESET_DB flag detected - recreating tables")
+                    cursor.execute('DROP TABLE IF EXISTS crop_varieties')
 
-        if count > 0:
-            self.logger.info(f"📊 Crop variety data already exists ({count} records)")
-            return
+                # Always ensure table exists (creation is atomic)
+                cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS crop_varieties (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        crop_type TEXT NOT NULL,
+                        variety_name TEXT NOT NULL,
+                        maturity_days INTEGER,
+                        water_requirement REAL,
+                        temperature_optimal REAL,
+                        temperature_max REAL,
+                        temperature_min REAL,
+                        region_prevalence TEXT,
+                        season_type TEXT,
+                        yield_potential REAL,
+                        drought_tolerance TEXT,
+                        disease_resistance TEXT,
+                        market_value REAL,
+                        UNIQUE(crop_type, variety_name)
+                    )
+                ''')
 
-        # Initialize with base crop variety data
-        crop_data = self._get_north_india_crop_varieties()
+                # Check existing data count (table must exist now)
+                cursor.execute("SELECT COUNT(*) FROM crop_varieties")
+                count = cursor.fetchone()[0]
 
-        with sqlite3.connect(str(self.db_path)) as conn:
-            for variety in crop_data:
-                conn.execute('''
-                    INSERT INTO crop_varieties
-                    (crop_type, variety_name, maturity_days, water_requirement,
-                     temperature_optimal, temperature_max, temperature_min,
-                     region_prevalence, season_type, yield_potential,
-                     drought_tolerance, disease_resistance, market_value)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ''', (
-                    variety['crop_type'],
-                    variety['variety_name'],
-                    variety['maturity_days'],
-                    variety['water_requirement'],
-                    variety['temperature_optimal'],
-                    variety['temperature_max'],
-                    variety['temperature_min'],
-                    variety['region_prevalence'],
-                    variety['season_type'],
-                    variety['yield_potential'],
-                    variety['drought_tolerance'],
-                    variety['disease_resistance'],
-                    variety['market_value']
-                ))
+                if count == 0:
+                    self.logger.info("🔄 Initializing crop variety data...")
+                    # Initialize with base crop variety data
+                    crop_data = self._get_north_india_crop_varieties()
 
-            conn.commit()
+                    for variety in crop_data:
+                        cursor.execute('''
+                            INSERT INTO crop_varieties
+                            (crop_type, variety_name, maturity_days, water_requirement,
+                             temperature_optimal, temperature_max, temperature_min,
+                             region_prevalence, season_type, yield_potential,
+                             drought_tolerance, disease_resistance, market_value)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ''', (
+                            variety['crop_type'],
+                            variety['variety_name'],
+                            variety['maturity_days'],
+                            variety['water_requirement'],
+                            variety['temperature_optimal'],
+                            variety['temperature_max'],
+                            variety['temperature_min'],
+                            variety['region_prevalence'],
+                            variety['season_type'],
+                            variety['yield_potential'],
+                            variety['drought_tolerance'],
+                            variety['disease_resistance'],
+                            variety['market_value']
+                        ))
 
-        self.logger.info(f"✅ Initialized {len(crop_data)} crop variety records")
+                    conn.commit()
+                    self.logger.info(f"✅ Initialized {len(crop_data)} crop variety records")
+                else:
+                    self.logger.info(f"✅ Crop variety data already exists ({count} records)")
+
+        except Exception as e:
+            self.logger.error(f"❌ Database initialization failed: {e}")
+            raise
 
     def _get_north_india_crop_varieties(self) -> List[Dict]:
         """Get comprehensive crop variety data for North India"""

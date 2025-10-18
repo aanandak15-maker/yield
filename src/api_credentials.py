@@ -116,9 +116,13 @@ class APICredentialsManager:
                 # Service-specific validation
                 if service == 'gee':
                     gee_creds = self.credentials[service]
-                    if not all(k in gee_creds and gee_creds[k] for k in
-                             ['service_account_email', 'private_key_path', 'project_id']):
-                        missing_services.append(f"{service} (incomplete)")
+                    # Check if we have either file-based or JSON-based credentials
+                    has_file_creds = all(k in gee_creds and gee_creds[k] for k in
+                                        ['service_account_email', 'private_key_path', 'project_id'])
+                    has_json_creds = all(k in gee_creds and gee_creds[k] for k in
+                                        ['service_account_email', 'private_key_content', 'project_id'])
+                    if not (has_file_creds or has_json_creds):
+                        missing_services.append(f"{service} (missing credentials)")
                 elif service == 'openweather':
                     if 'api_key' not in self.credentials[service]:
                         missing_services.append(f"{service} (missing api_key)")
@@ -167,10 +171,16 @@ class APICredentialsManager:
                 self.logger.info("🔑 Using GEE credentials from environment variable JSON content")
                 # Parse the JSON content and create temporary credentials
                 key_data = json.loads(gee_creds['private_key_content'])
-                credentials = ee.ServiceAccountCredentials.from_p12_keystring(
+
+                # Write private key to temporary file for GEE SDK
+                with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as temp_file:
+                    json.dump(key_data, temp_file)
+                    temp_key_file = temp_file.name
+
+                # Initialize Earth Engine
+                credentials = ee.ServiceAccountCredentials(
                     key_data['client_email'],
-                    key_data['private_key'],
-                    project=key_data['project_id']
+                    temp_key_file
                 )
 
             # Handle file-based credentials (development)
@@ -195,6 +205,11 @@ class APICredentialsManager:
 
         except Exception as e:
             self.logger.error(f"❌ Failed to initialize GEE: {e}")
+            # Skip GEE if in demo mode
+            import os
+            if os.getenv('ALLOW_LOCAL_TESTING') == 'true':
+                self.logger.warning("⚠️ GEE failed but ALLOW_LOCAL_TESTING=true, continuing with demo mode")
+                return True
             return False
 
     def test_openweather_connection(self) -> bool:
