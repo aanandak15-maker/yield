@@ -31,23 +31,13 @@ from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-# Handle relative imports for Railway deployment
-try:
-    # Production deployment
-    from .api_credentials import APICredentialsManager, initialize_all_apis
-    from .gee_client import GEEClient
-    from .weather_client import OpenWeatherClient
-    from .unified_data_pipeline import UnifiedDataPipeline
-    from .crop_variety_database import CropVarietyDatabase
-    from .sowing_date_intelligence import SowingDateIntelligence
-except ImportError:
-    # Local development
-    from api_credentials import APICredentialsManager, initialize_all_apis
-    from gee_client import GEEClient
-    from weather_client import OpenWeatherClient
-    from unified_data_pipeline import UnifiedDataPipeline
-    from crop_variety_database import CropVarietyDatabase
-    from sowing_date_intelligence import SowingDateIntelligence
+# Import modules (use absolute imports for deployment compatibility)
+from api_credentials import APICredentialsManager, initialize_all_apis
+from gee_client import GEEClient
+from weather_client import OpenWeatherClient
+from unified_data_pipeline import UnifiedDataPipeline
+from crop_variety_database import CropVarietyDatabase
+from sowing_date_intelligence import SowingDateIntelligence
 
 
 # Configure logging
