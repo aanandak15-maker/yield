@@ -746,6 +746,8 @@ class CropYieldPredictionService:
 
             # Make prediction
             X = np.array([feature_vector])
+            self.logger.info(f"Feature vector length: {len(feature_vector)}, Expected: {len(self.feature_columns)}")
+            self.logger.info(f"Feature columns: {self.feature_columns}")
             y_pred = model.predict(X)[0]
 
             # Calculate confidence interval (simple approach)
