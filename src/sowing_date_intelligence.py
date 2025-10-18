@@ -59,7 +59,7 @@ class SowingDateIntelligence:
         with sqlite3.connect(str(db_path)) as conn:
             cursor = conn.cursor()
 
-            # Sowing date data table
+            # Sowing date data table - bulletproof schema creation
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS sowing_dates (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -80,16 +80,28 @@ class SowingDateIntelligence:
                 )
             ''')
 
-            # Check if sowing_method column exists, add if missing
+            # Dynamic column management - ensure all required columns exist
             cursor.execute("PRAGMA table_info(sowing_dates)")
-            columns = [column[1] for column in cursor.fetchall()]
-            if 'sowing_method' not in columns:
-                try:
-                    cursor.execute('ALTER TABLE sowing_dates ADD COLUMN sowing_method TEXT')
-                    self.logger.info("✅ Added missing sowing_method column to sowing_dates table")
-                except sqlite3.OperationalError as e:
-                    self.logger.warning(f"Could not add sowing_method column: {e}")
-                    # Column might already exist or table might be in use
+            existing_columns = [column[1] for column in cursor.fetchall()]
+
+            required_columns = {
+                'sowing_method': 'TEXT',
+                'seed_rate': 'REAL',
+                'irrigation_scheduled': 'TEXT',
+                'notes': 'TEXT',
+                'district': 'TEXT',
+                'latitude': 'REAL',
+                'longitude': 'REAL'
+            }
+
+            for column_name, column_type in required_columns.items():
+                if column_name not in existing_columns:
+                    try:
+                        cursor.execute(f'ALTER TABLE sowing_dates ADD COLUMN {column_name} {column_type}')
+                        self.logger.info(f"✅ Added missing {column_name} column to sowing_dates table")
+                    except sqlite3.OperationalError as e:
+                        self.logger.warning(f"Could not add {column_name} column: {e}")
+                        # Column might already exist or table might be in use
 
             # Season patterns table
             cursor.execute('''

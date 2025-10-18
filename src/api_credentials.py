@@ -163,52 +163,63 @@ class APICredentialsManager:
             import ee
             import tempfile
             import json
+            import os
 
-            gee_creds = self.get_gee_credentials()
-
-            # Handle JSON content from environment variable (production)
-            if gee_creds.get('private_key_content'):
-                self.logger.info("🔑 Using GEE credentials from environment variable JSON content")
+            # Check for environment variable first
+            gee_json = os.getenv('GEE_PRIVATE_KEY_JSON')
+            if gee_json:
+                self.logger.info("🔑 Using GEE credentials from GEE_PRIVATE_KEY_JSON environment variable")
                 # Parse the JSON content and create temporary credentials
-                key_data = json.loads(gee_creds['private_key_content'])
+                try:
+                    key_data = json.loads(gee_json)
+                    # Write private key to temporary file for GEE SDK
+                    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as temp_file:
+                        json.dump(key_data, temp_file)
+                        temp_key_file = temp_file.name
 
-                # Write private key to temporary file for GEE SDK
-                with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as temp_file:
-                    json.dump(key_data, temp_file)
-                    temp_key_file = temp_file.name
+                    # Initialize Earth Engine with parsed credentials
+                    credentials = ee.ServiceAccountCredentials(
+                        key_data.get('client_email', 'crop-yield-gee-service@named-tome-472312-m3.iam.gserviceaccount.com'),
+                        temp_key_file
+                    )
 
-                # Initialize Earth Engine
-                credentials = ee.ServiceAccountCredentials(
-                    key_data['client_email'],
-                    temp_key_file
-                )
+                except json.JSONDecodeError as e:
+                    self.logger.error(f"❌ Failed to parse GEE_PRIVATE_KEY_JSON: {e}")
+                    raise ValueError("Invalid GEE_PRIVATE_KEY_JSON format")
 
-            # Handle file-based credentials (development)
-            elif gee_creds.get('private_key_path') and gee_creds['private_key_path'] is not None:
-                # Check if private key file exists
-                key_path = Path(gee_creds['private_key_path'])
-                if not key_path.exists():
-                    self.logger.warning(f"GEE private key file not found: {key_path}, trying environment JSON")
-
-                # Initialize Earth Engine
-                credentials = ee.ServiceAccountCredentials(
-                    gee_creds['service_account_email'],
-                    str(key_path)
-                )
             else:
-                # No valid credential source found
-                self.logger.error("❌ No valid GEE credential source found")
-                raise ValueError("No GEE private key source found (neither file nor environment variable)")
+                # Fallback to file-based credentials for development
+                gee_creds = self.get_gee_credentials()
+                gee_file = gee_creds.get('private_key_path') or gee_creds.get('private_key_content')
 
-            ee.Initialize(credentials, project=gee_creds.get('project_id', 'named-tome-472312-m3'))
-            self.logger.info("✅ Google Earth Engine initialized")
+                if gee_file and Path(gee_file).exists():
+                    self.logger.info("🔑 Using GEE credentials from file path")
+                    credentials = ee.ServiceAccountCredentials(
+                        gee_creds['service_account_email'],
+                        gee_file
+                    )
+                else:
+                    # Last resort: try to find any GEE file in config
+                    gee_config_file = Path('config/gee_private_key.json')
+                    if gee_config_file.exists():
+                        self.logger.info("🔑 Found GEE credentials file in config directory")
+                        credentials = ee.ServiceAccountCredentials(
+                            gee_creds.get('service_account_email', 'crop-yield-gee-service@named-tome-472312-m3.iam.gserviceaccount.com'),
+                            str(gee_config_file)
+                        )
+                    else:
+                        self.logger.error("❌ No valid GEE credential source found (no JSON env var, no file)")
+                        raise ValueError("No GEE private key source found")
+
+            # Initialize Earth Engine
+            ee.Initialize(credentials, project='named-tome-472312-m3')
+            self.logger.info("✅ Google Earth Engine initialized successfully")
 
             return True
 
         except Exception as e:
             self.logger.error(f"❌ Failed to initialize GEE: {e}")
             # Skip GEE if in demo mode
-            import os
             if os.getenv('ALLOW_LOCAL_TESTING') == 'true':
                 self.logger.warning("⚠️ GEE failed but ALLOW_LOCAL_TESTING=true, continuing with demo mode")
                 return True
