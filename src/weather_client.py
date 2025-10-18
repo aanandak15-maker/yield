@@ -57,9 +57,9 @@ class OpenWeatherClient:
             if not credentials_manager.load_credentials():
                 raise RuntimeError("Failed to load credentials")
 
-            try:
-                ow_creds = credentials_manager.get_openweather_credentials()
-                self._api_key = ow_creds['api_key']
+            ow_creds = credentials_manager.get_openweather_credentials()
+            self._api_key = ow_creds['api_key']
+
             except Exception as e:
                 self.logger.error(f"Failed to get API key: {e}")
                 raise

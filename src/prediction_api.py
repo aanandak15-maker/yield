@@ -935,6 +935,73 @@ async def predict_yield(request_data: PredictionRequest):
         )
 
 
+@app.get("/crops")
+async def get_crops():
+    """Get available crops and varieties"""
+    return prediction_service.get_available_crops_and_varieties()
+
+
+@app.post("/predict/field-analysis")
+async def predict_field_analysis(request_data: dict):
+    """Field analysis endpoint for polygon-based predictions"""
+    try:
+        # Extract field coordinates and convert to lat/lon
+        field_coords = request_data.get('field_coordinates', '')
+        if not field_coords:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="field_coordinates is required"
+            )
+        
+        # Parse coordinates (assuming format: lat1,lon1,lat2,lon2,lat3,lon3,lat4,lon4)
+        coords = [float(x.strip()) for x in field_coords.split(',')]
+        if len(coords) < 6:  # Need at least 3 points (6 coordinates)
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="At least 3 coordinate points required"
+            )
+        
+        # Calculate center point
+        lats = coords[::2]  # Every other element starting from 0
+        lons = coords[1::2]  # Every other element starting from 1
+        center_lat = sum(lats) / len(lats)
+        center_lon = sum(lons) / len(lons)
+        
+        # Create prediction request
+        prediction_request = {
+            "crop_type": request_data.get('crop_type', 'Rice'),
+            "variety_name": request_data.get('variety_name', 'IR-64'),
+            "location_name": request_data.get('location_name', 'Field Analysis'),
+            "latitude": center_lat,
+            "longitude": center_lon,
+            "sowing_date": request_data.get('sowing_date', '2024-07-15'),
+            "use_real_time_data": False
+        }
+        
+        # Get prediction
+        result = prediction_service.predict_yield(prediction_request)
+        
+        # Add field analysis information
+        result['field_analysis'] = {
+            'field_coordinates': field_coords,
+            'center_point': {
+                'latitude': center_lat,
+                'longitude': center_lon
+            },
+            'coordinate_count': len(coords) // 2,
+            'state': request_data.get('state', 'Unknown')
+        }
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Field analysis error: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Field analysis error: {str(e)}"
+        )
+
+
 @app.get("/debug/credentials")
 async def debug_credentials():
     """Debug endpoint to check credential loading"""
@@ -959,10 +1026,11 @@ async def root():
         "message": "Crop Yield Prediction API v6.0.0",
         "endpoints": {
             "GET /health": "Service health check",
-            "GET /debug/credentials": "Debug credential loading",
             "GET /crops": "Available crops and varieties",
+            "GET /debug/credentials": "Debug credential loading",
             "POST /validate": "Validate prediction input",
-            "POST /predict/yield": "Main yield prediction endpoint"
+            "POST /predict/yield": "Main yield prediction endpoint",
+            "POST /predict/field-analysis": "Field analysis with polygon coordinates"
         },
         "documentation": "/docs",
         "timestamp": datetime.now().isoformat()
