@@ -145,6 +145,16 @@ class CropYieldPredictionService:
             self.location_models = self._create_fallback_models()
             return
 
+        # Add NumPy compatibility layer for model loading
+        try:
+            import numpy as np
+            # Ensure NumPy compatibility for model loading
+            if hasattr(np, '_core'):
+                # NumPy 2.0+ compatibility
+                np._core = np.core
+        except Exception as e:
+            self.logger.warning(f"NumPy compatibility setup failed: {e}")
+
         # Check if models are compatible before loading
         model_files = list(models_dir.glob("*.pkl"))
 
@@ -195,21 +205,43 @@ class CropYieldPredictionService:
         total_loaded = 0
         for model_key, info in model_mapping.items():
             try:
-                # Use joblib for better cross-platform compatibility
-                model_data = joblib.load(info['path'])
-                model = model_data['model'] if isinstance(model_data, dict) else model_data
+                # Try multiple loading strategies for compatibility
+                model = None
+                
+                # Strategy 1: Direct joblib load
+                try:
+                    model_data = joblib.load(info['path'])
+                    model = model_data['model'] if isinstance(model_data, dict) else model_data
+                except Exception as e1:
+                    # Strategy 2: Try with different pickle protocol
+                    try:
+                        import pickle
+                        with open(info['path'], 'rb') as f:
+                            model_data = pickle.load(f)
+                        model = model_data['model'] if isinstance(model_data, dict) else model_data
+                    except Exception as e2:
+                        # Strategy 3: Try loading with compatibility mode
+                        try:
+                            import warnings
+                            with warnings.catch_warnings():
+                                warnings.simplefilter("ignore")
+                                model_data = joblib.load(info['path'])
+                                model = model_data['model'] if isinstance(model_data, dict) else model_data
+                        except Exception as e3:
+                            raise e1  # Use original error
 
-                location_name = info['location']
-                if location_name not in self.location_models:
-                    self.location_models[location_name] = {}
+                if model is not None:
+                    location_name = info['location']
+                    if location_name not in self.location_models:
+                        self.location_models[location_name] = {}
 
-                self.location_models[location_name][info['algorithm']] = {
-                    'model': model,
-                    'timestamp': info['timestamp'],
-                    'path': info['path']
-                }
-                total_loaded += 1
-                self.logger.info(f"✅ Successfully loaded model: {model_key}")
+                    self.location_models[location_name][info['algorithm']] = {
+                        'model': model,
+                        'timestamp': info['timestamp'],
+                        'path': info['path']
+                    }
+                    total_loaded += 1
+                    self.logger.info(f"✅ Successfully loaded model: {model_key}")
 
             except Exception as e:
                 self.logger.warning(f"Failed to load model {model_key}: {e}")
