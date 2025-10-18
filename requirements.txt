@@ -6,14 +6,21 @@ uvicorn[standard]>=0.24.0,<0.25.0
 pydantic>=2.11.0,<3.0.0
 python-multipart>=0.0.6
 
-# Machine Learning Dependencies with EXACT VERSION PINNING for Model Compatibility
-scikit-learn==1.3.2         # Exact version for pickle compatibility
-numpy==1.24.4                # Exact compatible version
-pandas==1.5.3                # Compatible stable version
-joblib==1.3.2                # Compatible joblib version
+# Machine Learning Dependencies with EXACT VERSION PINNING for Model Reproducibility
+# These versions are trained and deployed together to ensure 100% compatibility
 
-# XGBoost (Required for gradient boosting models) - Exact version
-xgboost==1.7.6               # Exact version for model compatibility
+scikit-learn==1.3.2         # Exact version for pickle/networking compatibility
+numpy==1.24.4                # Exact version matching sklearn compilation
+scipy==1.11.3                # Compatible with numpy/scikit-learn
+pandas==1.5.3                # Compatible stable version
+joblib==1.3.2                # Exact joblib for sklearn serialization
+
+# XGBoost (Required for gradient boosting models) - Exact compiled version
+xgboost==1.7.6               # Exact version matching internal module structure
+
+# Lock additional dependencies to prevent compatibility issues
+threadpoolctl==3.1.0         # Required by scikit-learn
+packaging==23.1              # Required by various packages
 
 # API Client Dependencies
 requests>=2.31.0,<3.0.0
