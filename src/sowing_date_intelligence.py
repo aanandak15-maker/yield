@@ -80,6 +80,17 @@ class SowingDateIntelligence:
                 )
             ''')
 
+            # Check if sowing_method column exists, add if missing
+            cursor.execute("PRAGMA table_info(sowing_dates)")
+            columns = [column[1] for column in cursor.fetchall()]
+            if 'sowing_method' not in columns:
+                try:
+                    cursor.execute('ALTER TABLE sowing_dates ADD COLUMN sowing_method TEXT')
+                    self.logger.info("✅ Added missing sowing_method column to sowing_dates table")
+                except sqlite3.OperationalError as e:
+                    self.logger.warning(f"Could not add sowing_method column: {e}")
+                    # Column might already exist or table might be in use
+
             # Season patterns table
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS season_patterns (

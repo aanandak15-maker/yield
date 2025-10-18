@@ -184,11 +184,11 @@ class APICredentialsManager:
                 )
 
             # Handle file-based credentials (development)
-            elif gee_creds.get('private_key_path'):
+            elif gee_creds.get('private_key_path') and gee_creds['private_key_path'] is not None:
                 # Check if private key file exists
                 key_path = Path(gee_creds['private_key_path'])
                 if not key_path.exists():
-                    raise FileNotFoundError(f"GEE private key file not found: {key_path}")
+                    self.logger.warning(f"GEE private key file not found: {key_path}, trying environment JSON")
 
                 # Initialize Earth Engine
                 credentials = ee.ServiceAccountCredentials(
@@ -196,6 +196,8 @@ class APICredentialsManager:
                     str(key_path)
                 )
             else:
+                # No valid credential source found
+                self.logger.error("❌ No valid GEE credential source found")
                 raise ValueError("No GEE private key source found (neither file nor environment variable)")
 
             ee.Initialize(credentials, project=gee_creds.get('project_id', 'named-tome-472312-m3'))
