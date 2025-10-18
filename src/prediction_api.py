@@ -332,13 +332,12 @@ class CropYieldPredictionService:
 
     def _setup_feature_mappings(self):
         """Set up feature mappings for model input"""
-        # Based on the original Phase 4 feature engineering
+        # Based on the original Phase 4 feature engineering - reduced to 15 features to match trained models
         self.feature_columns = [
             'NDVI', 'EVI', 'surface_temp', 'chirps_precipitation',
             'temp', 'temp_min', 'temp_max', 'humidity', 'wind_speed',
-            'wind_deg', 'pressure', 'clouds', 'rain_1h', 'rain_3h',
-            'total_rain', 'gdd_daily', 'gdd_cumulative', 'heat_stress',
-            'cold_stress', 'weather_stress_index'
+            'pressure', 'clouds', 'total_rain', 'gdd_daily', 'heat_stress',
+            'cold_stress'
         ]
 
         # Regional mappings - best model for each region
@@ -661,7 +660,7 @@ class CropYieldPredictionService:
                     'NDVI': 0.4, 'EVI': 0.35, 'surface_temp': 25, 'chirps_precipitation': 3.0
                 })
 
-            # Aggregate weather data
+            # Aggregate weather data (only the 15 features needed for trained models)
             if not weather_data.empty:
                 features.update({
                     'temp': weather_data['temp'].mean() if 'temp' in weather_data.columns else 28,
@@ -669,29 +668,23 @@ class CropYieldPredictionService:
                     'temp_max': weather_data['temp_max'].max() if 'temp_max' in weather_data.columns else 34,
                     'humidity': weather_data['humidity'].mean() if 'humidity' in weather_data.columns else 65,
                     'wind_speed': weather_data['wind_speed'].mean() if 'wind_speed' in weather_data.columns else 2.5,
-                    'wind_deg': weather_data['wind_deg'].mean() if 'wind_deg' in weather_data.columns else 90,
                     'pressure': weather_data['pressure'].mean() if 'pressure' in weather_data.columns else 1013,
                     'clouds': weather_data['clouds'].mean() if 'clouds' in weather_data.columns else 50,
-                    'rain_1h': weather_data.get('rain_1h', [0.0]).mean() if 'rain_1h' in weather_data.columns else 0.0,
-                    'rain_3h': weather_data.get('rain_3h', [0.0]).mean() if 'rain_3h' in weather_data.columns else 0.0,
                     'total_rain': weather_data.get('total_rain', features['chirps_precipitation'])
                 })
 
-                # Add agricultural indices if available
+                # Add agricultural indices if available (only the ones needed)
                 features.update({
                     'gdd_daily': weather_data.get('gdd_daily', [12]).mean(),
-                    'gdd_cumulative': min(weather_data.get('gdd_cumulative', [growth_days * 12]).mean(), growth_days * 15),
                     'heat_stress': weather_data.get('heat_stress', [0]).sum(),
-                    'cold_stress': weather_data.get('cold_stress', [0]).sum(),
-                    'weather_stress_index': weather_data.get('weather_stress_index', [0.5]).mean()
+                    'cold_stress': weather_data.get('cold_stress', [0]).sum()
                 })
             else:
                 features.update({
                     'temp': 28, 'temp_min': 22, 'temp_max': 34, 'humidity': 65,
-                    'wind_speed': 2.5, 'wind_deg': 90, 'pressure': 1013, 'clouds': 50,
-                    'rain_1h': 0.0, 'rain_3h': 0.0, 'total_rain': features['chirps_precipitation'],
-                    'gdd_daily': 12, 'gdd_cumulative': growth_days * 12,
-                    'heat_stress': 0, 'cold_stress': 0, 'weather_stress_index': 0.5
+                    'wind_speed': 2.5, 'pressure': 1013, 'clouds': 50,
+                    'total_rain': features['chirps_precipitation'],
+                    'gdd_daily': 12, 'heat_stress': 0, 'cold_stress': 0
                 })
 
         except Exception as e:
