@@ -921,6 +921,23 @@ async def predict_yield(request_data: PredictionRequest):
         )
 
 
+@app.get("/debug/credentials")
+async def debug_credentials():
+    """Debug endpoint to check credential loading"""
+    import os
+    gee_json = os.getenv('GEE_PRIVATE_KEY_JSON')
+    openweather_key = os.getenv('OPENWEATHER_API_KEY')
+    
+    return {
+        "gee_json_exists": bool(gee_json),
+        "gee_json_length": len(gee_json) if gee_json else 0,
+        "gee_json_preview": gee_json[:100] + "..." if gee_json and len(gee_json) > 100 else gee_json,
+        "openweather_key_exists": bool(openweather_key),
+        "openweather_key_length": len(openweather_key) if openweather_key else 0,
+        "environment": os.getenv('ENVIRONMENT', 'not_set')
+    }
+
+
 @app.get("/")
 async def root():
     """API root endpoint with documentation"""
@@ -928,6 +945,7 @@ async def root():
         "message": "Crop Yield Prediction API v6.0.0",
         "endpoints": {
             "GET /health": "Service health check",
+            "GET /debug/credentials": "Debug credential loading",
             "GET /crops": "Available crops and varieties",
             "POST /validate": "Validate prediction input",
             "POST /predict/yield": "Main yield prediction endpoint"
