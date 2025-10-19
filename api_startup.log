@@ -4514,3 +4514,111 @@ INFO:     Finished server process [25462]
 INFO:     Started server process [25483]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'src/prediction_api.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [25483]
+2025-10-19 11:30:49,716 - api_credentials - INFO - ✅ API credentials loaded successfully
+2025-10-19 11:30:49,716 - api_credentials - ERROR - ❌ No valid GEE credential source found (no JSON env var, no file)
+2025-10-19 11:30:49,716 - api_credentials - ERROR - ❌ Failed to initialize GEE: No GEE private key source found
+2025-10-19 11:30:49,717 - unified_data_pipeline - INFO - ✅ Database initialized at data/database/crop_prediction.db
+2025-10-19 11:30:49,718 - crop_variety_database - INFO - ✅ Index 'idx_crop_varieties_crop_type' verified
+2025-10-19 11:30:49,718 - crop_variety_database - INFO - ✅ Index 'idx_crop_varieties_region' verified
+2025-10-19 11:30:49,718 - crop_variety_database - INFO - ✅ Index 'idx_crop_varieties_crop_region' verified
+2025-10-19 11:30:49,718 - crop_variety_database - INFO - ✅ Crop variety database initialized at /Users/anand/Downloads/Crop-Yield-Prediction-1/src/../data/database/crop_prediction.db
+2025-10-19 11:30:49,718 - crop_variety_database - INFO - ✅ Crop variety data already exists (15 records)
+2025-10-19 11:30:49,718 - sowing_date_intelligence - INFO - Config loaded successfully from: /Users/anand/Downloads/Crop-Yield-Prediction-1/src/../config/api_config.json
+2025-10-19 11:30:49,719 - sowing_date_intelligence - INFO - ✅ Sowing date intelligence database initialized at /Users/anand/Downloads/Crop-Yield-Prediction-1/src/../data/database/crop_prediction.db
+2025-10-19 11:30:49,720 - sowing_date_intelligence - INFO - 📊 Sowing date data already exists (220 dates, 6 patterns)
+2025-10-19 11:30:49,720 - variety_selection_service - INFO - ✅ Initialized location mappings for 26 locations
+2025-10-19 11:30:49,720 - prediction_api - INFO - ✅ VarietySelectionService initialized successfully
+2025-10-19 11:30:50,518 - prediction_api - INFO - ============================================================
+2025-10-19 11:30:50,518 - prediction_api - INFO - Runtime Environment:
+2025-10-19 11:30:50,518 - prediction_api - INFO -   NumPy: 2.3.4
+2025-10-19 11:30:50,518 - prediction_api - INFO -   scikit-learn: 1.7.2
+2025-10-19 11:30:50,518 - prediction_api - INFO -   joblib: 1.5.2
+2025-10-19 11:30:50,640 - prediction_api - INFO -   XGBoost: 2.1.4
+2025-10-19 11:30:50,640 - prediction_api - INFO - ============================================================
+2025-10-19 11:30:50,640 - prediction_api - INFO - ✅ NumPy version 2.3.4 >= 2.0 (compatible)
+2025-10-19 11:30:50,640 - prediction_api - INFO - ✅ scikit-learn version 1.7.2 >= 1.7 (compatible)
+2025-10-19 11:30:50,833 - prediction_api - INFO - ✅ Successfully loaded model: patna_training_random_forest
+2025-10-19 11:30:50,836 - prediction_api - INFO - ✅ Successfully loaded model: chandigarh_training_gradient_boosting
+2025-10-19 11:30:50,846 - prediction_api - INFO - ✅ Successfully loaded model: north_india_random_forest
+2025-10-19 11:30:50,847 - prediction_api - INFO - ✅ Successfully loaded model: north_india_ridge
+2025-10-19 11:30:50,847 - prediction_api - INFO - ✅ Successfully loaded model: lucknow_training_ridge
+2025-10-19 11:30:50,857 - prediction_api - INFO - ✅ Successfully loaded model: lucknow_training_random_forest
+2025-10-19 11:30:50,859 - prediction_api - INFO - ✅ Successfully loaded model: lucknow_training_gradient_boosting
+2025-10-19 11:30:50,861 - prediction_api - INFO - ✅ Successfully loaded model: patna_training_gradient_boosting
+2025-10-19 11:30:50,871 - prediction_api - INFO - ✅ Successfully loaded model: chandigarh_training_random_forest
+2025-10-19 11:30:50,874 - prediction_api - INFO - ✅ Successfully loaded model: bhopal_training_gradient_boosting
+2025-10-19 11:30:50,874 - prediction_api - INFO - ✅ Successfully loaded model: patna_training_ridge
+2025-10-19 11:30:50,876 - prediction_api - INFO - ✅ Successfully loaded model: north_india_gradient_boosting
+2025-10-19 11:30:50,886 - prediction_api - INFO - ✅ Successfully loaded model: bhopal_training_random_forest
+2025-10-19 11:30:50,886 - prediction_api - INFO - ✅ Successfully loaded model: bhopal_training_ridge
+2025-10-19 11:30:50,887 - prediction_api - INFO - ✅ Successfully loaded model: chandigarh_training_ridge
+2025-10-19 11:30:50,887 - prediction_api - INFO - ============================================================
+2025-10-19 11:30:50,887 - prediction_api - INFO - Model Loading Summary:
+2025-10-19 11:30:50,887 - prediction_api - INFO -   Total models found: 15
+2025-10-19 11:30:50,887 - prediction_api - INFO -   Successfully loaded: 15
+2025-10-19 11:30:50,887 - prediction_api - INFO -   Failed to load: 0
+2025-10-19 11:30:50,887 - prediction_api - INFO - ============================================================
+2025-10-19 11:30:50,887 - prediction_api - INFO - ✅ Service ready with 15 models across 5 locations
+2025-10-19 11:30:50,887 - prediction_api - INFO - ✅ Crop Yield Prediction Service initialized
+INFO:     Started server process [29832]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'src/prediction_api.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [29832]
+2025-10-19 11:31:30,600 - api_credentials - INFO - ✅ API credentials loaded successfully
+2025-10-19 11:31:30,600 - api_credentials - ERROR - ❌ No valid GEE credential source found (no JSON env var, no file)
+2025-10-19 11:31:30,600 - api_credentials - ERROR - ❌ Failed to initialize GEE: No GEE private key source found
+2025-10-19 11:31:30,601 - unified_data_pipeline - INFO - ✅ Database initialized at data/database/crop_prediction.db
+2025-10-19 11:31:30,602 - crop_variety_database - INFO - ✅ Index 'idx_crop_varieties_crop_type' verified
+2025-10-19 11:31:30,602 - crop_variety_database - INFO - ✅ Index 'idx_crop_varieties_region' verified
+2025-10-19 11:31:30,602 - crop_variety_database - INFO - ✅ Index 'idx_crop_varieties_crop_region' verified
+2025-10-19 11:31:30,602 - crop_variety_database - INFO - ✅ Crop variety database initialized at /Users/anand/Downloads/Crop-Yield-Prediction-1/src/../data/database/crop_prediction.db
+2025-10-19 11:31:30,602 - crop_variety_database - INFO - ✅ Crop variety data already exists (15 records)
+2025-10-19 11:31:30,602 - sowing_date_intelligence - INFO - Config loaded successfully from: /Users/anand/Downloads/Crop-Yield-Prediction-1/src/../config/api_config.json
+2025-10-19 11:31:30,603 - sowing_date_intelligence - INFO - ✅ Sowing date intelligence database initialized at /Users/anand/Downloads/Crop-Yield-Prediction-1/src/../data/database/crop_prediction.db
+2025-10-19 11:31:30,603 - sowing_date_intelligence - INFO - 📊 Sowing date data already exists (220 dates, 6 patterns)
+2025-10-19 11:31:30,603 - variety_selection_service - INFO - ✅ Initialized location mappings for 26 locations
+2025-10-19 11:31:30,603 - prediction_api - INFO - ✅ VarietySelectionService initialized successfully
+2025-10-19 11:31:31,397 - prediction_api - INFO - ============================================================
+2025-10-19 11:31:31,397 - prediction_api - INFO - Runtime Environment:
+2025-10-19 11:31:31,397 - prediction_api - INFO -   NumPy: 2.3.4
+2025-10-19 11:31:31,397 - prediction_api - INFO -   scikit-learn: 1.7.2
+2025-10-19 11:31:31,397 - prediction_api - INFO -   joblib: 1.5.2
+2025-10-19 11:31:31,517 - prediction_api - INFO -   XGBoost: 2.1.4
+2025-10-19 11:31:31,517 - prediction_api - INFO - ============================================================
+2025-10-19 11:31:31,517 - prediction_api - INFO - ✅ NumPy version 2.3.4 >= 2.0 (compatible)
+2025-10-19 11:31:31,517 - prediction_api - INFO - ✅ scikit-learn version 1.7.2 >= 1.7 (compatible)
+2025-10-19 11:31:31,724 - prediction_api - INFO - ✅ Successfully loaded model: patna_training_random_forest
+2025-10-19 11:31:31,727 - prediction_api - INFO - ✅ Successfully loaded model: chandigarh_training_gradient_boosting
+2025-10-19 11:31:31,739 - prediction_api - INFO - ✅ Successfully loaded model: north_india_random_forest
+2025-10-19 11:31:31,739 - prediction_api - INFO - ✅ Successfully loaded model: north_india_ridge
+2025-10-19 11:31:31,740 - prediction_api - INFO - ✅ Successfully loaded model: lucknow_training_ridge
+2025-10-19 11:31:31,749 - prediction_api - INFO - ✅ Successfully loaded model: lucknow_training_random_forest
+2025-10-19 11:31:31,752 - prediction_api - INFO - ✅ Successfully loaded model: lucknow_training_gradient_boosting
+2025-10-19 11:31:31,754 - prediction_api - INFO - ✅ Successfully loaded model: patna_training_gradient_boosting
+2025-10-19 11:31:31,764 - prediction_api - INFO - ✅ Successfully loaded model: chandigarh_training_random_forest
+2025-10-19 11:31:31,767 - prediction_api - INFO - ✅ Successfully loaded model: bhopal_training_gradient_boosting
+2025-10-19 11:31:31,767 - prediction_api - INFO - ✅ Successfully loaded model: patna_training_ridge
+2025-10-19 11:31:31,770 - prediction_api - INFO - ✅ Successfully loaded model: north_india_gradient_boosting
+2025-10-19 11:31:31,779 - prediction_api - INFO - ✅ Successfully loaded model: bhopal_training_random_forest
+2025-10-19 11:31:31,781 - prediction_api - INFO - ✅ Successfully loaded model: bhopal_training_ridge
+2025-10-19 11:31:31,782 - prediction_api - INFO - ✅ Successfully loaded model: chandigarh_training_ridge
+2025-10-19 11:31:31,782 - prediction_api - INFO - ============================================================
+2025-10-19 11:31:31,782 - prediction_api - INFO - Model Loading Summary:
+2025-10-19 11:31:31,782 - prediction_api - INFO -   Total models found: 15
+2025-10-19 11:31:31,782 - prediction_api - INFO -   Successfully loaded: 15
+2025-10-19 11:31:31,782 - prediction_api - INFO -   Failed to load: 0
+2025-10-19 11:31:31,782 - prediction_api - INFO - ============================================================
+2025-10-19 11:31:31,782 - prediction_api - INFO - ✅ Service ready with 15 models across 5 locations
+2025-10-19 11:31:31,782 - prediction_api - INFO - ✅ Crop Yield Prediction Service initialized
+INFO:     Started server process [29863]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
