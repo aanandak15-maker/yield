@@ -69,6 +69,46 @@ class CropVarietyDatabase:
                 )
             ''')
 
+            # Create indexes for optimal query performance
+            # Index on crop_type for filtering by crop
+            cursor.execute('''
+                CREATE INDEX IF NOT EXISTS idx_crop_varieties_crop_type 
+                ON crop_varieties(crop_type)
+            ''')
+
+            # Index on region_prevalence for regional variety queries
+            cursor.execute('''
+                CREATE INDEX IF NOT EXISTS idx_crop_varieties_region 
+                ON crop_varieties(region_prevalence)
+            ''')
+
+            # Composite index on (crop_type, region_prevalence) for optimal query performance
+            cursor.execute('''
+                CREATE INDEX IF NOT EXISTS idx_crop_varieties_crop_region 
+                ON crop_varieties(crop_type, region_prevalence)
+            ''')
+
+            # Verify indexes were created successfully
+            cursor.execute('''
+                SELECT name FROM sqlite_master 
+                WHERE type='index' AND tbl_name='crop_varieties'
+            ''')
+            indexes = cursor.fetchall()
+            index_names = [idx[0] for idx in indexes]
+            
+            # Log index creation status
+            expected_indexes = [
+                'idx_crop_varieties_crop_type',
+                'idx_crop_varieties_region',
+                'idx_crop_varieties_crop_region'
+            ]
+            
+            for idx_name in expected_indexes:
+                if idx_name in index_names:
+                    self.logger.info(f"✅ Index '{idx_name}' verified")
+                else:
+                    self.logger.warning(f"⚠️  Index '{idx_name}' not found")
+
             # Variety performance metrics
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS variety_performance (

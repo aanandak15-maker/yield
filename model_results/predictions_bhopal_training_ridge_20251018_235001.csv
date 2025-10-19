@@ -1,0 +1,13 @@
+month,predicted_yield,model,dataset
+1.0,-30527785.27488554,ridge,bhopal_training
+2.0,-41506571.266291074,ridge,bhopal_training
+3.0,-59026086.96374378,ridge,bhopal_training
+4.0,-69054024.91226734,ridge,bhopal_training
+5.0,-68734733.95188625,ridge,bhopal_training
+6.0,-45928972.545384385,ridge,bhopal_training
+7.0,-16154667.993570114,ridge,bhopal_training
+8.0,-13312826.374569997,ridge,bhopal_training
+9.0,-22037214.60866466,ridge,bhopal_training
+10.0,-31554007.91653427,ridge,bhopal_training
+11.0,-34846875.42019253,ridge,bhopal_training
+12.0,-25865803.193631276,ridge,bhopal_training

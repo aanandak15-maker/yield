@@ -6,23 +6,23 @@ uvicorn[standard]>=0.24.0,<0.25.0
 pydantic>=2.11.0,<3.0.0
 python-multipart>=0.0.6
 
-# Machine Learning Dependencies with PINNED VERSIONS for Model Loading
-# Exact versions to fix numpy._core and _loss module issues
+# Machine Learning Dependencies - NumPy 2.x Compatible
+# Updated to match runtime environment and fix numpy._core compatibility issues
 
-scikit-learn==1.6.0     # Compatible version for model loading
-numpy==1.24.3          # Compatible version avoiding _core issues
-pandas==2.2.1          # Compatible stable version
+scikit-learn>=1.7.0,<1.8.0     # NumPy 2.x compatible version
+numpy>=2.3.0,<3.0.0            # NumPy 2.x - fixes _core module issues
+pandas>=2.2.0,<3.0.0           # Compatible with NumPy 2.x
 
-# XGBoost (Required for gradient boosting models) - Pinned compatible version
-xgboost==1.7.6         # Compatible version avoiding _loss issues
+# XGBoost (Required for gradient boosting models) - NumPy 2.x compatible
+xgboost>=2.0.0,<3.0.0          # Compatible with NumPy 2.x
 
 # Additional ML dependencies
-scipy>=1.11.0         # Compatible with numpy/scikit-learn
-joblib>=1.3.0         # Compatible joblib for sklearn serialization
+scipy>=1.11.0,<2.0.0           # Compatible with NumPy 2.x and scikit-learn 1.7.x
+joblib>=1.5.0,<2.0.0           # NumPy 2.x serialization support
 
 # Lock additional dependencies to prevent compatibility issues
-threadpoolctl==3.1.0         # Required by scikit-learn
-packaging==23.1              # Required by various packages
+threadpoolctl>=3.1.0,<4.0.0    # Required by scikit-learn
+packaging>=23.1,<25.0          # Required by various packages
 
 # API Client Dependencies
 requests>=2.31.0,<3.0.0

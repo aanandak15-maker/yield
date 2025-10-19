@@ -1,37 +1,37 @@
 {
   "phase": "4_model_training",
-  "completed_at": "2025-10-18T21:33:12.309792",
+  "completed_at": "2025-10-18T23:50:01.101525",
   "summary": {
     "datasets_trained": 5,
     "models_trained": 15,
     "predictions_generated": true,
-    "model_files": 180,
-    "result_files": 13
+    "model_files": 195,
+    "result_files": 15
   },
   "model_performance": {
     "bhopal_training": {
       "best_model": "random_forest",
-      "best_r2": 0.999999736762901,
+      "best_r2": 0.9999997239122166,
       "models_trained": 3
     },
     "lucknow_training": {
       "best_model": "random_forest",
-      "best_r2": 0.9999989293651382,
+      "best_r2": 0.999998793538316,
       "models_trained": 3
     },
     "patna_training": {
       "best_model": "random_forest",
-      "best_r2": 0.999983693165266,
+      "best_r2": 0.9999834037578677,
       "models_trained": 3
     },
     "chandigarh_training": {
       "best_model": "random_forest",
-      "best_r2": 0.9999990966064766,
+      "best_r2": 0.9999992253849658,
       "models_trained": 3
     },
     "north_india_regional": {
       "best_model": "random_forest",
-      "best_r2": 0.9999999651942487,
+      "best_r2": 0.9999999889168633,
       "models_trained": 3
     }
   }

@@ -8,5 +8,11 @@ services:
         value: production
       - key: PYTHONPATH
         value: /app
+      - key: LOG_LEVEL
+        value: INFO
     plan: starter
     healthCheckPath: /health
+    autoDeploy: true
+    # Optional: Add custom domain
+    # customDomains:
+    #   - api.yourdomain.com

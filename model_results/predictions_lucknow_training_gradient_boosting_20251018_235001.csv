@@ -1,0 +1,13 @@
+month,predicted_yield,model,dataset
+1.0,0.47510014284459207,gradient_boosting,lucknow_training
+2.0,0.48330718325105093,gradient_boosting,lucknow_training
+3.0,0.4838998149638855,gradient_boosting,lucknow_training
+4.0,0.5028682581514626,gradient_boosting,lucknow_training
+5.0,0.5072945553337587,gradient_boosting,lucknow_training
+6.0,0.45548904765393916,gradient_boosting,lucknow_training
+7.0,0.372303443835851,gradient_boosting,lucknow_training
+8.0,0.44115242433475776,gradient_boosting,lucknow_training
+9.0,0.5565878625991809,gradient_boosting,lucknow_training
+10.0,0.6370070873975906,gradient_boosting,lucknow_training
+11.0,0.5523844522212128,gradient_boosting,lucknow_training
+12.0,0.47189231837879525,gradient_boosting,lucknow_training

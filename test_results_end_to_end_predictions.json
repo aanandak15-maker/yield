@@ -1,0 +1,348 @@
+{
+  "timestamp": "2025-10-19T01:27:26.544016",
+  "summary": {
+    "total_tests": 12,
+    "passed": 12,
+    "failed": 0,
+    "success_rate": 1.0
+  },
+  "test_details": [
+    {
+      "test": "Bhopal - HTTP Status",
+      "passed": true,
+      "details": "Status 200 OK"
+    },
+    {
+      "test": "Bhopal - Response Validation",
+      "passed": true,
+      "details": "All required fields present and valid"
+    },
+    {
+      "test": "Lucknow - HTTP Status",
+      "passed": true,
+      "details": "Status 200 OK"
+    },
+    {
+      "test": "Lucknow - Response Validation",
+      "passed": true,
+      "details": "All required fields present and valid"
+    },
+    {
+      "test": "Chandigarh - HTTP Status",
+      "passed": true,
+      "details": "Status 200 OK"
+    },
+    {
+      "test": "Chandigarh - Response Validation",
+      "passed": true,
+      "details": "All required fields present and valid"
+    },
+    {
+      "test": "Patna - HTTP Status",
+      "passed": true,
+      "details": "Status 200 OK"
+    },
+    {
+      "test": "Patna - Response Validation",
+      "passed": true,
+      "details": "All required fields present and valid"
+    },
+    {
+      "test": "North India - HTTP Status",
+      "passed": true,
+      "details": "Status 200 OK"
+    },
+    {
+      "test": "North India - Response Validation",
+      "passed": true,
+      "details": "All required fields present and valid"
+    },
+    {
+      "test": "Location Coverage",
+      "passed": true,
+      "details": "All 5 locations tested successfully"
+    },
+    {
+      "test": "No Fallback Models",
+      "passed": true,
+      "details": "All predictions using newly trained models"
+    }
+  ],
+  "predictions": [
+    {
+      "location": "Bhopal",
+      "response": {
+        "prediction_id": "Rice_Bhopal_20251019_012726",
+        "timestamp": "2025-10-19T01:27:26.510787",
+        "input": {
+          "crop_type": "Rice",
+          "variety_name": "Basmati 370",
+          "location": {
+            "name": "Bhopal",
+            "latitude": 23.2599,
+            "longitude": 77.4126
+          },
+          "sowing_date": "2025-07-21",
+          "growth_days": 90,
+          "use_real_time_data": false
+        },
+        "prediction": {
+          "yield_tons_per_hectare": 0.51,
+          "variety_used": "Basmati 370",
+          "variety_assumed": false,
+          "lower_bound": 0.32,
+          "upper_bound": 0.71,
+          "confidence_score": 0.8,
+          "variety_adjusted_yield": 0.41
+        },
+        "model": {
+          "location_used": "bhopal_training",
+          "algorithm": "gradient_boosting",
+          "model_timestamp": "20251013_154118",
+          "feature_count": 15
+        },
+        "data_sources": {
+          "satellite_data_points": 90,
+          "weather_data_points": 57,
+          "data_freshness_hours": 0
+        },
+        "factors": {
+          "variety_characteristics": {
+            "maturity_days": 150,
+            "yield_potential": 4.5,
+            "drought_tolerance": "Medium"
+          },
+          "environmental_adjustments": {
+            "heat_stress_penalty": 0.5,
+            "drought_penalty": 0.0,
+            "cold_stress_penalty": 0.0,
+            "optimal_temp_bonus": 0.3
+          },
+          "data_quality": 0.0
+        },
+        "processing_time_seconds": 0.01,
+        "api_version": "6.1.0"
+      }
+    },
+    {
+      "location": "Lucknow",
+      "response": {
+        "prediction_id": "Wheat_Lucknow_20251019_012726",
+        "timestamp": "2025-10-19T01:27:26.519303",
+        "input": {
+          "crop_type": "Wheat",
+          "variety_name": "HD 3086",
+          "location": {
+            "name": "Lucknow",
+            "latitude": 26.8467,
+            "longitude": 80.9462
+          },
+          "sowing_date": "2025-07-21",
+          "growth_days": 90,
+          "use_real_time_data": false
+        },
+        "prediction": {
+          "yield_tons_per_hectare": 0.51,
+          "variety_used": "HD 3086",
+          "variety_assumed": false,
+          "lower_bound": 0.31,
+          "upper_bound": 0.71,
+          "confidence_score": 0.8,
+          "variety_adjusted_yield": 0.26
+        },
+        "model": {
+          "location_used": "lucknow_training",
+          "algorithm": "gradient_boosting",
+          "model_timestamp": "20251013_154946",
+          "feature_count": 15
+        },
+        "data_sources": {
+          "satellite_data_points": 90,
+          "weather_data_points": 57,
+          "data_freshness_hours": 0
+        },
+        "factors": {
+          "variety_characteristics": {
+            "maturity_days": 155,
+            "yield_potential": 6.5,
+            "drought_tolerance": "Medium"
+          },
+          "environmental_adjustments": {
+            "heat_stress_penalty": 0.5,
+            "drought_penalty": 0.0,
+            "cold_stress_penalty": 0.0,
+            "optimal_temp_bonus": 0.0
+          },
+          "data_quality": 0.0
+        },
+        "processing_time_seconds": 0.01,
+        "api_version": "6.1.0"
+      }
+    },
+    {
+      "location": "Chandigarh",
+      "response": {
+        "prediction_id": "Rice_Chandigarh_20251019_012726",
+        "timestamp": "2025-10-19T01:27:26.526677",
+        "input": {
+          "crop_type": "Rice",
+          "variety_name": "PR 126",
+          "location": {
+            "name": "Chandigarh",
+            "latitude": 30.7333,
+            "longitude": 76.7794
+          },
+          "sowing_date": "2025-07-21",
+          "growth_days": 90,
+          "use_real_time_data": false
+        },
+        "prediction": {
+          "yield_tons_per_hectare": 0.51,
+          "variety_used": "PR 126",
+          "variety_assumed": false,
+          "lower_bound": 0.32,
+          "upper_bound": 0.71,
+          "confidence_score": 0.8,
+          "variety_adjusted_yield": 0.41
+        },
+        "model": {
+          "location_used": "chandigarh_training",
+          "algorithm": "gradient_boosting",
+          "model_timestamp": "20251013_155922",
+          "feature_count": 15
+        },
+        "data_sources": {
+          "satellite_data_points": 90,
+          "weather_data_points": 57,
+          "data_freshness_hours": 0
+        },
+        "factors": {
+          "variety_characteristics": {
+            "maturity_days": 135,
+            "yield_potential": 5.2,
+            "drought_tolerance": "High"
+          },
+          "environmental_adjustments": {
+            "heat_stress_penalty": 0.5,
+            "drought_penalty": 0.0,
+            "cold_stress_penalty": 0.0,
+            "optimal_temp_bonus": 0.3
+          },
+          "data_quality": 0.0
+        },
+        "processing_time_seconds": 0.01,
+        "api_version": "6.1.0"
+      }
+    },
+    {
+      "location": "Patna",
+      "response": {
+        "prediction_id": "Maize_Patna_20251019_012726",
+        "timestamp": "2025-10-19T01:27:26.533108",
+        "input": {
+          "crop_type": "Maize",
+          "variety_name": "DHM 117",
+          "location": {
+            "name": "Patna",
+            "latitude": 25.5941,
+            "longitude": 85.1376
+          },
+          "sowing_date": "2025-07-21",
+          "growth_days": 90,
+          "use_real_time_data": false
+        },
+        "prediction": {
+          "yield_tons_per_hectare": 0.51,
+          "variety_used": "DHM 117",
+          "variety_assumed": false,
+          "lower_bound": 0.32,
+          "upper_bound": 0.71,
+          "confidence_score": 0.8,
+          "variety_adjusted_yield": 0.41
+        },
+        "model": {
+          "location_used": "patna_training",
+          "algorithm": "gradient_boosting",
+          "model_timestamp": "20251018_213307",
+          "feature_count": 15
+        },
+        "data_sources": {
+          "satellite_data_points": 90,
+          "weather_data_points": 57,
+          "data_freshness_hours": 0
+        },
+        "factors": {
+          "variety_characteristics": {
+            "maturity_days": 115,
+            "yield_potential": 9.5,
+            "drought_tolerance": "High"
+          },
+          "environmental_adjustments": {
+            "heat_stress_penalty": 0.5,
+            "drought_penalty": 0.0,
+            "cold_stress_penalty": 0.0,
+            "optimal_temp_bonus": 0.3
+          },
+          "data_quality": 0.0
+        },
+        "processing_time_seconds": 0.0,
+        "api_version": "6.1.0"
+      }
+    },
+    {
+      "location": "North India",
+      "response": {
+        "prediction_id": "Rice_North India_20251019_012726",
+        "timestamp": "2025-10-19T01:27:26.542880",
+        "input": {
+          "crop_type": "Rice",
+          "variety_name": "Swarna",
+          "location": {
+            "name": "North India",
+            "latitude": 28.6139,
+            "longitude": 77.209
+          },
+          "sowing_date": "2025-07-21",
+          "growth_days": 90,
+          "use_real_time_data": false
+        },
+        "prediction": {
+          "yield_tons_per_hectare": 0.51,
+          "variety_used": "Swarna",
+          "variety_assumed": false,
+          "lower_bound": 0.31,
+          "upper_bound": 0.71,
+          "confidence_score": 0.8,
+          "variety_adjusted_yield": 0.54
+        },
+        "model": {
+          "location_used": "lucknow_training",
+          "algorithm": "gradient_boosting",
+          "model_timestamp": "20251013_154946",
+          "feature_count": 15
+        },
+        "data_sources": {
+          "satellite_data_points": 90,
+          "weather_data_points": 57,
+          "data_freshness_hours": 0
+        },
+        "factors": {
+          "variety_characteristics": {
+            "maturity_days": 140,
+            "yield_potential": 5.8,
+            "drought_tolerance": "Medium"
+          },
+          "environmental_adjustments": {
+            "heat_stress_penalty": 0.25,
+            "drought_penalty": 0.0,
+            "cold_stress_penalty": 0.0,
+            "optimal_temp_bonus": 0.3
+          },
+          "data_quality": 0.0
+        },
+        "processing_time_seconds": 0.01,
+        "api_version": "6.1.0"
+      }
+    }
+  ]
+}

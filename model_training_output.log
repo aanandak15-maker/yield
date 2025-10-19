@@ -1,0 +1,144 @@
+🌾 NORTH INDIA CROP PREDICTION
+Phase 4: Model Training Pipeline
+==================================================
+🔧 Training Environment:
+  NumPy: 2.3.4
+  scikit-learn: 1.7.2
+  joblib: 1.5.2
+  Python: 3.11.10
+
+🔄 PHASE 4: NORTH INDIA MODEL TRAINING PIPELINE
+============================================================
+📊 Loading Training Datasets...
+  ✅ Loaded bhopal_training: 3647 records
+  ✅ Loaded lucknow_training: 3647 records
+  ✅ Loaded patna_training: 3647 records
+  ✅ Loaded chandigarh_training: 3647 records
+  ✅ Loaded north_india_regional: 14588 records
+🚀 PHASE 4: MODEL TRAINING FOR NORTH INDIA
+============================================================
+
+==================================================
+DATASET: BHOPAL_TRAINING
+==================================================
+
+🤖 Training Models for bhopal_training...
+  📊 Using existing yield_proxy from data
+  📊 Training with 15 features and 1826 samples
+    🏋️  Training Ridge Regression...
+      ✅ Ridge Regression: R² = 1.000, MAE = 0.000
+      💾 Saved model to models/bhopal_training_ridge_20251018_234953.pkl
+    🏋️  Training Random Forest...
+      ✅ Random Forest: R² = 1.000, MAE = 0.000
+      💾 Saved model to models/bhopal_training_random_forest_20251018_234953.pkl
+    🏋️  Training Gradient Boosting...
+      ✅ Gradient Boosting: R² = 1.000, MAE = 0.001
+      💾 Saved model to models/bhopal_training_gradient_boosting_20251018_234953.pkl
+    📊 Saved evaluation plots for bhopal_training
+
+==================================================
+DATASET: LUCKNOW_TRAINING
+==================================================
+
+🤖 Training Models for lucknow_training...
+  📊 Using existing yield_proxy from data
+  📊 Training with 15 features and 1826 samples
+    🏋️  Training Ridge Regression...
+      ✅ Ridge Regression: R² = 1.000, MAE = 0.000
+      💾 Saved model to models/lucknow_training_ridge_20251018_234955.pkl
+    🏋️  Training Random Forest...
+      ✅ Random Forest: R² = 1.000, MAE = 0.000
+      💾 Saved model to models/lucknow_training_random_forest_20251018_234955.pkl
+    🏋️  Training Gradient Boosting...
+      ✅ Gradient Boosting: R² = 1.000, MAE = 0.001
+      💾 Saved model to models/lucknow_training_gradient_boosting_20251018_234956.pkl
+    📊 Saved evaluation plots for lucknow_training
+
+==================================================
+DATASET: PATNA_TRAINING
+==================================================
+
+🤖 Training Models for patna_training...
+  📊 Using existing yield_proxy from data
+  📊 Training with 15 features and 1826 samples
+    🏋️  Training Ridge Regression...
+      ✅ Ridge Regression: R² = 1.000, MAE = 0.000
+      💾 Saved model to models/patna_training_ridge_20251018_234956.pkl
+    🏋️  Training Random Forest...
+      ✅ Random Forest: R² = 1.000, MAE = 0.000
+      💾 Saved model to models/patna_training_random_forest_20251018_234956.pkl
+    🏋️  Training Gradient Boosting...
+      ✅ Gradient Boosting: R² = 1.000, MAE = 0.001
+      💾 Saved model to models/patna_training_gradient_boosting_20251018_234957.pkl
+    📊 Saved evaluation plots for patna_training
+
+==================================================
+DATASET: CHANDIGARH_TRAINING
+==================================================
+
+🤖 Training Models for chandigarh_training...
+  📊 Using existing yield_proxy from data
+  📊 Training with 15 features and 1826 samples
+    🏋️  Training Ridge Regression...
+      ✅ Ridge Regression: R² = 1.000, MAE = 0.000
+      💾 Saved model to models/chandigarh_training_ridge_20251018_234957.pkl
+    🏋️  Training Random Forest...
+      ✅ Random Forest: R² = 1.000, MAE = 0.000
+      💾 Saved model to models/chandigarh_training_random_forest_20251018_234957.pkl
+    🏋️  Training Gradient Boosting...
+      ✅ Gradient Boosting: R² = 1.000, MAE = 0.001
+      💾 Saved model to models/chandigarh_training_gradient_boosting_20251018_234958.pkl
+    📊 Saved evaluation plots for chandigarh_training
+
+==================================================
+DATASET: NORTH_INDIA_REGIONAL
+==================================================
+
+🤖 Training Models for north_india_regional...
+  📊 Using existing yield_proxy from data
+  📊 Training with 15 features and 7304 samples
+    🏋️  Training Ridge Regression...
+      ✅ Ridge Regression: R² = 1.000, MAE = 0.000
+      💾 Saved model to models/north_india_regional_ridge_20251018_234958.pkl
+    🏋️  Training Random Forest...
+      ✅ Random Forest: R² = 1.000, MAE = 0.000
+      💾 Saved model to models/north_india_regional_random_forest_20251018_234959.pkl
+    🏋️  Training Gradient Boosting...
+      ✅ Gradient Boosting: R² = 1.000, MAE = 0.001
+      💾 Saved model to models/north_india_regional_gradient_boosting_20251018_235000.pkl
+    📊 Saved evaluation plots for north_india_regional
+
+📊 TRAINING SUMMARY:
+  📁 Datasets trained: 5
+  🤖 Models trained: 15
+  ✅ bhopal_training: Best model = random_forest (R² = 1.000)
+  ✅ lucknow_training: Best model = random_forest (R² = 1.000)
+  ✅ patna_training: Best model = random_forest (R² = 1.000)
+  ✅ chandigarh_training: Best model = random_forest (R² = 1.000)
+  ✅ north_india_regional: Best model = random_forest (R² = 1.000)
+
+💾 Detailed results saved to: model_results/training_summary.json
+
+🔮 Generating 2024 Predictions...
+    ✅ Generated ridge predictions for bhopal_training
+    ✅ Generated random_forest predictions for bhopal_training
+    ✅ Generated gradient_boosting predictions for bhopal_training
+    ✅ Generated ridge predictions for lucknow_training
+    ✅ Generated random_forest predictions for lucknow_training
+    ✅ Generated gradient_boosting predictions for lucknow_training
+    ✅ Generated ridge predictions for patna_training
+    ✅ Generated random_forest predictions for patna_training
+    ✅ Generated gradient_boosting predictions for patna_training
+    ✅ Generated ridge predictions for chandigarh_training
+    ✅ Generated random_forest predictions for chandigarh_training
+    ✅ Generated gradient_boosting predictions for chandigarh_training
+    ✅ Generated ridge predictions for north_india_regional
+    ✅ Generated random_forest predictions for north_india_regional
+    ✅ Generated gradient_boosting predictions for north_india_regional
+💾 Saved predictions to model_results/
+📋 Final training report saved
+
+🎉 PHASE 4 Complete: Model Training Pipeline
+🤖 Trained models available in 'models/' directory
+📊 Results and predictions in 'model_results/' directory
+🔄 Ready for Phase 5: Production Deployment!

@@ -1,0 +1,256 @@
+{
+  "timestamp": "2025-10-19T01:26:54.637492",
+  "summary": {
+    "total_tests": 49,
+    "passed": 48,
+    "failed": 1,
+    "success_rate": 0.9795918367346939
+  },
+  "test_details": [
+    {
+      "test": "With Variety - Bhopal + Rice + Basmati 370 - No Error",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Bhopal + Rice + Basmati 370 - Response Structure",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Bhopal + Rice + Basmati 370 - Correct Variety Used",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Bhopal + Rice + Basmati 370 - variety_assumed=False",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Bhopal + Rice + Basmati 370 - No Selection Metadata",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Bhopal + Rice + Basmati 370 - Valid Yield",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Chandigarh + Wheat + HD 3086 - No Error",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Chandigarh + Wheat + HD 3086 - Response Structure",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Chandigarh + Wheat + HD 3086 - Correct Variety Used",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Chandigarh + Wheat + HD 3086 - variety_assumed=False",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Chandigarh + Wheat + HD 3086 - No Selection Metadata",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Chandigarh + Wheat + HD 3086 - Valid Yield",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Lucknow + Maize + DHM 117 - No Error",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Lucknow + Maize + DHM 117 - Response Structure",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Lucknow + Maize + DHM 117 - Correct Variety Used",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Lucknow + Maize + DHM 117 - variety_assumed=False",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Lucknow + Maize + DHM 117 - No Selection Metadata",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "With Variety - Lucknow + Maize + DHM 117 - Valid Yield",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - No Error",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - 'prediction_id' Type",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - 'timestamp' Type",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - 'input' Type",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - 'prediction' Type",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - 'model' Type",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - 'factors' Type",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - 'data_sources' Type",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - 'processing_time_seconds' Type",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - 'api_version' Type",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - prediction.yield_tons_per_hectare",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - prediction.variety_used",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - prediction.variety_assumed",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - prediction.lower_bound",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - prediction.upper_bound",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Response Format - prediction.confidence_score",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Client Pattern - Standard request with all fields",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "Client Pattern - Request with use_real_time_data=True",
+      "passed": false,
+      "details": "Got error: {'type': 'DataCollectionFailed', 'message': 'Failed to collect real-time data: GEE authentication failed', 'timestamp': '2025-10-19T01:26:54.590535'}"
+    },
+    {
+      "test": "Client Pattern - Request with different crop type",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "variety_assumed=false - Rice + Basmati 370",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "variety_assumed=false - Wheat + HD 3086",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "variety_assumed=false - Maize + DHM 117",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "variety_assumed=false - Rice + Swarna",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "variety_assumed=false - Wheat + PBW 725",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "No Breaking Changes - variety_name accepted",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "No Breaking Changes - crop_type required",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "No Breaking Changes - location_name required",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "No Breaking Changes - latitude required",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "No Breaking Changes - longitude required",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "No Breaking Changes - sowing_date required",
+      "passed": true,
+      "details": ""
+    },
+    {
+      "test": "No Breaking Changes - Response structure",
+      "passed": true,
+      "details": ""
+    }
+  ]
+}

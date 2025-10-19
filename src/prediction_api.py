@@ -18,6 +18,7 @@ Fixed: Real-time data collection and endpoint deployment issues
 import os
 import json
 import logging
+import time
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any, Union
 from pathlib import Path
@@ -41,6 +42,7 @@ from weather_client import OpenWeatherClient
 from unified_data_pipeline import UnifiedDataPipeline
 from crop_variety_database import CropVarietyDatabase
 from sowing_date_intelligence import SowingDateIntelligence
+from variety_selection_service import VarietySelectionService
 
 
 # Configure logging
@@ -58,8 +60,8 @@ class PredictionRequest(BaseModel):
         ..., description="Crop type (Rice, Wheat, Maize)",
         pattern="^(Rice|Wheat|Maize)$"
     )
-    variety_name: str = Field(
-        ..., description="Crop variety name"
+    variety_name: Optional[str] = Field(
+        None, description="Crop variety name (optional - defaults to regional most popular)"
     )
     location_name: str = Field(
         ..., description="Location name (e.g., Bhopal, Lucknow)"
@@ -131,41 +133,111 @@ class CropYieldPredictionService:
             self.variety_db = CropVarietyDatabase()
             self.sowing_intelligence = SowingDateIntelligence()
 
+            # Initialize variety selection service
+            try:
+                self.variety_selector = VarietySelectionService(self.variety_db)
+                self.logger.info("✅ VarietySelectionService initialized successfully")
+            except Exception as variety_error:
+                self.logger.error(f"❌ Failed to initialize VarietySelectionService: {variety_error}")
+                self.logger.warning("⚠️  Variety selection will not be available - variety_name will be required")
+                self.variety_selector = None
+
         except Exception as e:
             self.logger.error(f"Failed to initialize service components: {e}")
             raise
 
+    def _log_runtime_environment(self):
+        """Log runtime environment for debugging"""
+        try:
+            import sklearn
+            import numpy as np
+            
+            self.logger.info("=" * 60)
+            self.logger.info("Runtime Environment:")
+            self.logger.info(f"  NumPy: {np.__version__}")
+            self.logger.info(f"  scikit-learn: {sklearn.__version__}")
+            self.logger.info(f"  joblib: {joblib.__version__}")
+            
+            # Try to log XGBoost if available
+            try:
+                import xgboost as xgb
+                self.logger.info(f"  XGBoost: {xgb.__version__}")
+            except ImportError:
+                self.logger.info("  XGBoost: Not installed")
+            
+            self.logger.info("=" * 60)
+        except Exception as e:
+            self.logger.warning(f"Failed to log runtime environment: {e}")
+
+    def _check_environment_compatibility(self) -> bool:
+        """Check if runtime environment is compatible with model requirements"""
+        try:
+            import sklearn
+            import numpy as np
+            
+            compatible = True
+            
+            # Check NumPy version (2.0+ required for newly trained models)
+            numpy_version = tuple(map(int, np.__version__.split('.')[:2]))
+            if numpy_version[0] < 2:
+                self.logger.error(f"❌ NumPy version {np.__version__} < 2.0 (incompatible)")
+                compatible = False
+            else:
+                self.logger.info(f"✅ NumPy version {np.__version__} >= 2.0 (compatible)")
+            
+            # Check scikit-learn version (1.7+ required for NumPy 2.x compatibility)
+            sklearn_version = tuple(map(int, sklearn.__version__.split('.')[:2]))
+            if sklearn_version < (1, 7):
+                self.logger.error(f"❌ scikit-learn version {sklearn.__version__} < 1.7 (incompatible)")
+                compatible = False
+            else:
+                self.logger.info(f"✅ scikit-learn version {sklearn.__version__} >= 1.7 (compatible)")
+            
+            return compatible
+            
+        except Exception as e:
+            self.logger.error(f"❌ Environment compatibility check failed: {e}")
+            return False
+
+    def _validate_model_structure(self, model_data) -> bool:
+        """Validate that loaded model has expected structure"""
+        required_keys = ['model', 'scaler', 'features', 'metrics']
+        
+        if not isinstance(model_data, dict):
+            self.logger.warning("Model data is not a dictionary")
+            return False
+        
+        missing_keys = [key for key in required_keys if key not in model_data]
+        if missing_keys:
+            self.logger.warning(f"Model missing required keys: {missing_keys}")
+            return False
+        
+        return True
+
     def _load_models(self):
-        """Load trained ML models with compatibility handling"""
+        """Load trained ML models with enhanced compatibility handling"""
         self.models = {}
         models_dir = Path("models")
+
+        # Log runtime environment at startup
+        self._log_runtime_environment()
 
         if not models_dir.exists():
             self.logger.warning(f"Models directory not found: {models_dir}")
             self.location_models = self._create_fallback_models()
             return
 
-        # Add NumPy compatibility layer for model loading
-        try:
-            import numpy as np
-            # Ensure NumPy compatibility for model loading
-            if hasattr(np, '_core'):
-                # NumPy 2.0+ compatibility
-                np._core = np.core
-        except Exception as e:
-            self.logger.warning(f"NumPy compatibility setup failed: {e}")
+        # Check environment compatibility before attempting to load
+        if not self._check_environment_compatibility():
+            self.logger.error("❌ Environment incompatible with model requirements")
+            self.location_models = self._create_fallback_models()
+            return
 
-        # Check if models are compatible before loading
+        # Check if models are available
         model_files = list(models_dir.glob("*.pkl"))
 
         if not model_files:
             self.logger.warning("No trained models found in models directory")
-            self.location_models = self._create_fallback_models()
-            return
-
-        # Check model compatibility first
-        if not self._are_models_compatible():
-            self.logger.warning("⚠️ Model compatibility check failed, using fallback models")
             self.location_models = self._create_fallback_models()
             return
 
@@ -200,98 +272,78 @@ class CropYieldPredictionService:
                     'timestamp': timestamp
                 }
 
-        # Load and store models by location
+        # Load and store models by location with enhanced error tracking
         self.location_models = {}
         total_loaded = 0
+        failed_models = []
+        
         for model_key, info in model_mapping.items():
             try:
-                # Try multiple loading strategies for compatibility
-                model = None
+                # Load model data
+                model_data = joblib.load(info['path'])
                 
-                # Strategy 1: Direct joblib load
-                try:
-                    model_data = joblib.load(info['path'])
-                    model = model_data['model'] if isinstance(model_data, dict) else model_data
-                except Exception as e1:
-                    # Strategy 2: Try with different pickle protocol
-                    try:
-                        import pickle
-                        with open(info['path'], 'rb') as f:
-                            model_data = pickle.load(f)
-                        model = model_data['model'] if isinstance(model_data, dict) else model_data
-                    except Exception as e2:
-                        # Strategy 3: Try loading with compatibility mode
-                        try:
-                            import warnings
-                            with warnings.catch_warnings():
-                                warnings.simplefilter("ignore")
-                                model_data = joblib.load(info['path'])
-                                model = model_data['model'] if isinstance(model_data, dict) else model_data
-                        except Exception as e3:
-                            raise e1  # Use original error
+                # Validate model structure
+                if not self._validate_model_structure(model_data):
+                    error_type = "Invalid structure"
+                    failed_models.append((model_key, error_type))
+                    self.logger.warning(f"❌ Failed to load {model_key}: {error_type}")
+                    continue
+                
+                # Extract model components
+                location_name = info['location']
+                if location_name not in self.location_models:
+                    self.location_models[location_name] = {}
 
-                if model is not None:
-                    location_name = info['location']
-                    if location_name not in self.location_models:
-                        self.location_models[location_name] = {}
-
-                    self.location_models[location_name][info['algorithm']] = {
-                        'model': model,
-                        'timestamp': info['timestamp'],
-                        'path': info['path']
-                    }
-                    total_loaded += 1
-                    self.logger.info(f"✅ Successfully loaded model: {model_key}")
+                self.location_models[location_name][info['algorithm']] = {
+                    'model': model_data['model'],
+                    'scaler': model_data.get('scaler'),
+                    'poly': model_data.get('poly'),
+                    'features': model_data.get('features'),
+                    'timestamp': info['timestamp'],
+                    'path': info['path']
+                }
+                total_loaded += 1
+                self.logger.info(f"✅ Successfully loaded model: {model_key}")
 
             except Exception as e:
-                self.logger.warning(f"Failed to load model {model_key}: {e}")
-                # Log specific error types for debugging
-                if 'numpy._core' in str(e):
-                    self.logger.warning(f"  → NumPy version compatibility issue for {model_key}")
-                elif '_loss' in str(e):
-                    self.logger.warning(f"  → XGBoost version compatibility issue for {model_key}")
-                # Continue with fallback logic for individual model failures
+                error_msg = str(e)
+                
+                # Classify error type for better debugging
+                if 'numpy._core' in error_msg or 'numpy.core' in error_msg or ("numpy" in error_msg.lower() and "_core" in error_msg):
+                    error_type = "NumPy version incompatibility"
+                elif '_loss' in error_msg or 'xgboost' in error_msg.lower():
+                    error_type = "XGBoost version incompatibility"
+                elif 'sklearn' in error_msg.lower():
+                    error_type = "scikit-learn version incompatibility"
+                elif 'pickle' in error_msg.lower() or 'unpickl' in error_msg.lower():
+                    error_type = "Pickle/serialization error"
+                else:
+                    error_type = "Unknown error"
+                
+                failed_models.append((model_key, f"{error_type}: {error_msg[:100]}"))
+                self.logger.warning(f"❌ Failed to load {model_key}: {error_type}")
+                self.logger.debug(f"   Error details: {error_msg}")
+
+        # Log summary
+        self.logger.info("=" * 60)
+        self.logger.info(f"Model Loading Summary:")
+        self.logger.info(f"  Total models found: {len(model_mapping)}")
+        self.logger.info(f"  Successfully loaded: {total_loaded}")
+        self.logger.info(f"  Failed to load: {len(failed_models)}")
+        
+        if failed_models:
+            self.logger.warning("Failed models:")
+            for model_name, error in failed_models:
+                self.logger.warning(f"  - {model_name}: {error}")
+        
+        self.logger.info("=" * 60)
 
         # If no models loaded successfully, use fallbacks
         if total_loaded == 0:
             self.logger.warning("❌ No models loaded successfully, switching to fallback prediction")
             self.location_models = self._create_fallback_models()
         else:
-            self.logger.info(f"✅ Loaded {total_loaded} models for {len(self.location_models)} locations")
-
-    def _are_models_compatible(self) -> bool:
-        """Check if saved models are compatible with current environment"""
-        try:
-            import sklearn
-            import xgboost as xgb
-            import numpy as np
-
-            # Check scikit-learn version (compatible 1.3-1.6)
-            sklearn_version = tuple(map(int, sklearn.__version__.split('.')[:2]))
-            if sklearn_version < (1, 3) or sklearn_version > (1, 6):
-                self.logger.warning(f"❌ Incompatible scikit-learn version: {sklearn.__version__}")
-                return False
-
-            # Check XGBoost version (compatible 1.7-2.1)
-            xgb_version = tuple(map(int, xgb.__version__.split('.')[:2]))
-            if xgb_version < (1, 7) or xgb_version > (2, 1):
-                self.logger.warning(f"❌ Incompatible XGBoost version: {xgb.__version__}")
-                return False
-
-            # Check NumPy version (compatible 1.24-2.0)
-            numpy_version = tuple(map(int, np.__version__.split('.')[:2]))
-            if numpy_version < (1, 24) or numpy_version > (2, 0):
-                self.logger.warning(f"❌ Incompatible NumPy version: {np.__version__}")
-                return False
-
-            return True
-
-        except ImportError as e:
-            self.logger.warning(f"❌ Missing required dependencies: {e}")
-            return False
-        except Exception as e:
-            self.logger.warning(f"❌ Model compatibility check failed: {e}")
-            return False
+            self.logger.info(f"✅ Service ready with {total_loaded} models across {len(self.location_models)} locations")
 
     def _create_fallback_models(self) -> Dict:
         """Create simple fallback models when saved models aren't compatible"""
@@ -332,18 +384,16 @@ class CropYieldPredictionService:
 
     def _setup_feature_mappings(self):
         """Set up feature mappings for model input"""
-        # Based on the original Phase 4 feature engineering - match the training feature sets
+        # Based on the original Phase 4 feature engineering - reduced to 15 features to match trained models
         self.feature_columns = [
-            # Basic weather features (6)
-            'temp_max', 'temp_min', 'temp_mean', 'precipitation', 'humidity', 'solar_radiation',
-            # Derived features (5) 
-            'temp_range', 'gdd', 'precipitation_7d_sum', 'heat_stress_days', 'water_availability_index',
+            # Basic weather features (5)
+            'temp_max', 'temp_min', 'temp_mean', 'precipitation', 'humidity',
+            # Derived features (4) 
+            'temp_range', 'gdd', 'heat_stress_days', 'water_availability_index',
             # Seasonal features (3)
             'is_kharif_season', 'is_rabi_season', 'is_zaid_season',
             # Vegetation indices (3)
-            'Fpar', 'NDVI', 'Lai',
-            # Soil features (1)
-            'soil_ph'
+            'Fpar', 'NDVI', 'Lai'
         ]
 
         # Regional mappings - best model for each region
@@ -369,18 +419,160 @@ class CropYieldPredictionService:
             start_time = datetime.now()
             self.logger.info(f"🔍 Starting prediction for {request_data['crop_type']} in {request_data['location_name']}")
 
+            # Check if variety needs to be selected (None, null, or empty string)
+            variety_assumed = False
+            selection_metadata = None
+            
+            if not request_data.get('variety_name'):
+                # Variety is missing, None, or empty string - select default variety
+                if self.variety_selector is None:
+                    self.logger.error(
+                        f"❌ Variety selection service unavailable for {request_data['crop_type']} "
+                        f"in {request_data['location_name']}"
+                    )
+                    return self._error_response(
+                        "ServiceUnavailable",
+                        "Variety selection service is not available. Please specify variety_name.",
+                        variety_selection_available=False
+                    )
+                
+                try:
+                    # Attempt to select default variety with full error handling
+                    # Start performance timing for variety selection
+                    variety_selection_start = time.time()
+                    
+                    self.logger.info(
+                        f"🔄 Starting variety selection | "
+                        f"crop_type={request_data['crop_type']} | "
+                        f"location={request_data['location_name']}"
+                    )
+                    
+                    selection_result = self.variety_selector.select_default_variety(
+                        request_data['crop_type'],
+                        request_data['location_name']
+                    )
+                    
+                    # Calculate variety selection time
+                    variety_selection_time_ms = (time.time() - variety_selection_start) * 1000
+                    
+                    # Validate selection result structure
+                    if not selection_result or 'variety_name' not in selection_result:
+                        raise ValueError("Invalid selection result: missing variety_name")
+                    
+                    # Update request data with selected variety
+                    request_data['variety_name'] = selection_result['variety_name']
+                    variety_assumed = True
+                    selection_metadata = selection_result.get('selection_metadata', {})
+                    
+                    # INFO-level logging for variety selection with full metadata and timing
+                    self.logger.info(
+                        f"✅ Variety selection completed | "
+                        f"crop_type={request_data['crop_type']} | "
+                        f"location={request_data['location_name']} | "
+                        f"selected_variety={request_data['variety_name']} | "
+                        f"reason={selection_metadata.get('reason', 'unknown')} | "
+                        f"region={selection_metadata.get('region', 'unknown')} | "
+                        f"yield_potential={selection_metadata.get('yield_potential', 'N/A')} | "
+                        f"total_time={variety_selection_time_ms:.2f}ms"
+                    )
+                    
+                except ValueError as ve:
+                    # Handle NoVarietiesAvailable scenario
+                    # ERROR-level logging for variety selection failure
+                    self.logger.error(
+                        f"❌ Variety selection failed (no varieties available) | "
+                        f"crop_type={request_data['crop_type']} | "
+                        f"location={request_data['location_name']} | "
+                        f"error={str(ve)}"
+                    )
+                    return self._error_response(
+                        "NoVarietiesAvailable",
+                        f"Unable to determine appropriate variety for crop type '{request_data['crop_type']}' "
+                        f"in location '{request_data['location_name']}'. Please specify variety_name explicitly.",
+                        crop_type=request_data['crop_type'],
+                        location=request_data['location_name'],
+                        error_details=str(ve)
+                    )
+                    
+                except Exception as e:
+                    # Handle database query failures and other errors
+                    # ERROR-level logging for variety selection failure with error type
+                    self.logger.error(
+                        f"❌ Variety selection failed (unexpected error) | "
+                        f"crop_type={request_data['crop_type']} | "
+                        f"location={request_data['location_name']} | "
+                        f"error_type={type(e).__name__} | "
+                        f"error={str(e)}"
+                    )
+                    
+                    # Determine error type for better response
+                    if "database" in str(e).lower() or "query" in str(e).lower():
+                        error_code = "DatabaseError"
+                        error_message = (
+                            f"Database error during variety selection: {str(e)}. "
+                            f"Please specify variety_name explicitly or try again later."
+                        )
+                    else:
+                        error_code = "VarietySelectionFailed"
+                        error_message = (
+                            f"Failed to select default variety: {str(e)}. "
+                            f"Please specify variety_name explicitly."
+                        )
+                    
+                    return self._error_response(
+                        error_code,
+                        error_message,
+                        crop_type=request_data['crop_type'],
+                        location=request_data['location_name'],
+                        error_details=str(e)
+                    )
+
             # Validate inputs and get variety information
-            variety_info = self.variety_db.get_variety_by_name(
-                request_data['crop_type'],
-                request_data['variety_name']
-            )
+            # This validation applies to both user-specified and auto-selected varieties
+            try:
+                variety_info = self.variety_db.get_variety_by_name(
+                    request_data['crop_type'],
+                    request_data['variety_name']
+                )
+            except Exception as db_error:
+                self.logger.error(
+                    f"❌ Database error while validating variety '{request_data['variety_name']}' "
+                    f"for {request_data['crop_type']}: {str(db_error)}"
+                )
+                return self._error_response(
+                    "DatabaseError",
+                    f"Failed to validate variety information: {str(db_error)}",
+                    crop_type=request_data['crop_type'],
+                    variety_name=request_data['variety_name']
+                )
 
             if not variety_info:
-                return self._error_response(
-                    "InvalidInput",
-                    f"Variety '{request_data['variety_name']}' not found for crop '{request_data['crop_type']}'",
-                    variety_found=False
-                )
+                # Log detailed error based on whether variety was auto-selected or user-specified
+                if variety_assumed:
+                    self.logger.error(
+                        f"❌ Auto-selected variety '{request_data['variety_name']}' not found in database "
+                        f"for {request_data['crop_type']} (this should not happen - indicates data inconsistency)"
+                    )
+                    return self._error_response(
+                        "InternalError",
+                        f"Selected variety '{request_data['variety_name']}' not found in database. "
+                        f"This indicates a data inconsistency issue.",
+                        variety_found=False,
+                        variety_assumed=True,
+                        crop_type=request_data['crop_type']
+                    )
+                else:
+                    self.logger.warning(
+                        f"⚠️  User-specified variety '{request_data['variety_name']}' not found "
+                        f"for {request_data['crop_type']}"
+                    )
+                    return self._error_response(
+                        "InvalidInput",
+                        f"Variety '{request_data['variety_name']}' not found for crop '{request_data['crop_type']}'. "
+                        f"Please check the variety name or omit it to use automatic selection.",
+                        variety_found=False,
+                        crop_type=request_data['crop_type']
+                    )
 
             # Calculate growing period days from sowing date
             sowing_date = datetime.fromisoformat(request_data['sowing_date'])
@@ -461,6 +653,8 @@ class CropYieldPredictionService:
                 # Prediction results
                 'prediction': {
                     'yield_tons_per_hectare': round(float(model_result['prediction']), 2),
+                    'variety_used': request_data['variety_name'],
+                    'variety_assumed': variety_assumed,
                     'lower_bound': round(float(model_result['lower_bound']), 2),
                     'upper_bound': round(float(model_result['upper_bound']), 2),
                     'confidence_score': round(model_result['confidence'], 3),
@@ -500,8 +694,12 @@ class CropYieldPredictionService:
 
                 # Processing information
                 'processing_time_seconds': round((datetime.now() - start_time).total_seconds(), 2),
-                'api_version': '6.0.0'
+                'api_version': '6.1.0'
             }
+
+            # Add selection metadata if variety was assumed
+            if variety_assumed and selection_metadata:
+                response['factors']['default_variety_selection'] = selection_metadata
 
             self.logger.info(f"✅ Prediction completed: {response['prediction']['yield_tons_per_hectare']} tons/ha")
             return response
@@ -957,6 +1155,80 @@ async def health_check():
             "models_loaded": len(prediction_service.location_models)
         }
     }
+
+
+@app.get("/health/detailed")
+async def detailed_health_check():
+    """Detailed health check including model loading status and environment info"""
+    try:
+        import sklearn
+        import numpy as np
+        
+        # Calculate model loading status
+        model_status = {}
+        total_models = 0
+        
+        for location, models in prediction_service.location_models.items():
+            model_status[location] = {
+                'algorithms': list(models.keys()),
+                'count': len(models)
+            }
+            total_models += len(models)
+        
+        # Check if running in fallback mode
+        # Fallback mode is indicated by models having 'fallback' in their path or timestamp
+        is_fallback_mode = False
+        if total_models > 0:
+            for location, models in prediction_service.location_models.items():
+                for algorithm, model_info in models.items():
+                    if 'fallback' in str(model_info.get('path', '')).lower() or \
+                       'fallback' in str(model_info.get('timestamp', '')).lower():
+                        is_fallback_mode = True
+                        break
+                if is_fallback_mode:
+                    break
+        else:
+            is_fallback_mode = True
+        
+        # Determine overall service status
+        if total_models == 0:
+            service_status = 'degraded'
+        elif is_fallback_mode:
+            service_status = 'degraded'
+        else:
+            service_status = 'healthy'
+        
+        return {
+            'status': service_status,
+            'timestamp': datetime.now().isoformat(),
+            'version': '6.0.0',
+            'environment': {
+                'numpy_version': np.__version__,
+                'sklearn_version': sklearn.__version__,
+                'joblib_version': joblib.__version__
+            },
+            'models': {
+                'total_loaded': total_models,
+                'locations': len(prediction_service.location_models),
+                'by_location': model_status,
+                'fallback_mode': is_fallback_mode
+            },
+            'components': {
+                "api_manager": "ready",
+                "gee_client": "ready" if prediction_service.gee_client else "unavailable",
+                "weather_client": "ready" if prediction_service.weather_client else "unavailable",
+                "variety_db": "ready" if prediction_service.variety_db else "unavailable",
+                "sowing_intelligence": "ready" if prediction_service.sowing_intelligence else "unavailable"
+            }
+        }
+    
+    except Exception as e:
+        logger.error(f"Detailed health check failed: {e}")
+        return {
+            'status': 'error',
+            'timestamp': datetime.now().isoformat(),
+            'error': str(e)
+        }
 
 
 @app.get("/dashboard")

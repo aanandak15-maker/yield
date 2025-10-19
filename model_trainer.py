@@ -18,6 +18,8 @@ import numpy as np
 import json
 import os
 import pickle
+import sys
+import joblib
 from datetime import datetime
 from sklearn.model_selection import train_test_split, cross_val_score, TimeSeriesSplit
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
@@ -42,6 +44,9 @@ class NorthIndiaModelTrainer:
         # Create directories
         os.makedirs(self.models_dir, exist_ok=True)
         os.makedirs(self.results_dir, exist_ok=True)
+        
+        # Log environment information at initialization
+        self._log_environment_info()
 
         # Model configurations
         self.models_config = {
@@ -80,6 +85,16 @@ class NorthIndiaModelTrainer:
             'Wheat': {'kharif': None, 'rabi': [10, 11, 12, 1, 2, 3], 'zaid': None},
             'Maize': {'kharif': [6, 7, 8, 9], 'rabi': None, 'zaid': None}
         }
+
+    def _log_environment_info(self):
+        """Log current environment versions for reproducibility"""
+        import sklearn
+        print("🔧 Training Environment:")
+        print(f"  NumPy: {np.__version__}")
+        print(f"  scikit-learn: {sklearn.__version__}")
+        print(f"  joblib: {joblib.__version__}")
+        print(f"  Python: {sys.version.split()[0]}")
+        print()
 
     def load_training_datasets(self):
         """Load all processed training datasets"""
@@ -269,7 +284,9 @@ class NorthIndiaModelTrainer:
         return model_results
 
     def _save_model(self, model_info, dataset_name, model_key):
-        """Save trained model and metadata"""
+        """Save trained model and metadata with environment information"""
+        import sklearn
+        
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
         model_data = {
@@ -279,13 +296,19 @@ class NorthIndiaModelTrainer:
             'features': model_info['features'],
             'metrics': model_info['metrics'],
             'dataset': model_info['dataset'],
-            'created_at': timestamp
+            'created_at': timestamp,
+            'environment': {
+                'numpy_version': np.__version__,
+                'sklearn_version': sklearn.__version__,
+                'joblib_version': joblib.__version__,
+                'python_version': sys.version
+            }
         }
 
         filename = f"{self.models_dir}/{dataset_name}_{model_key}_{timestamp}.pkl"
 
-        with open(filename, 'wb') as f:
-            pickle.dump(model_data, f)
+        # Use joblib with protocol 5 for better NumPy 2.x compatibility
+        joblib.dump(model_data, filename, protocol=5)
 
         print(f"      💾 Saved model to {filename}")
 

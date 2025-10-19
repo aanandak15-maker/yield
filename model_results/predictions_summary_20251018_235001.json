@@ -1,0 +1,217 @@
+{
+  "generated_at": "20251018_235001",
+  "datasets": [
+    "bhopal_training",
+    "lucknow_training",
+    "patna_training",
+    "chandigarh_training",
+    "north_india_regional"
+  ],
+  "predictions": {
+    "bhopal_training": {
+      "ridge": {
+        "file": "model_results/predictions_bhopal_training_ridge_20251018_235001.csv",
+        "mean_prediction": -38212464.20180177,
+        "std_prediction": 18306981.695747565,
+        "metrics": {
+          "train_r2": 0.999982457479019,
+          "test_r2": 0.9999821085975721,
+          "train_mae": 0.0001774721603744815,
+          "test_mae": 0.0001829219488241854,
+          "train_rmse": 0.0002343071862680132,
+          "test_rmse": 0.00024204396332030146
+        }
+      },
+      "random_forest": {
+        "file": "model_results/predictions_bhopal_training_random_forest_20251018_235001.csv",
+        "mean_prediction": 0.49014875819926423,
+        "std_prediction": 0.06759990439009718,
+        "metrics": {
+          "train_r2": 0.9999991253158641,
+          "test_r2": 0.9999997239122166,
+          "train_mae": 7.777428576072142e-06,
+          "test_mae": 6.596157919093589e-06,
+          "train_rmse": 5.2319698344165974e-05,
+          "test_rmse": 3.0067384994573336e-05
+        }
+      },
+      "gradient_boosting": {
+        "file": "model_results/predictions_bhopal_training_gradient_boosting_20251018_235001.csv",
+        "mean_prediction": 0.4953313898854487,
+        "std_prediction": 0.06320839488505536,
+        "metrics": {
+          "train_r2": 0.9997727509004123,
+          "test_r2": 0.9997536095487831,
+          "train_mae": 0.0006020562110045645,
+          "test_mae": 0.0006377664964292665,
+          "train_rmse": 0.0008433166831949556,
+          "test_rmse": 0.0008982226451603641
+        }
+      }
+    },
+    "lucknow_training": {
+      "ridge": {
+        "file": "model_results/predictions_lucknow_training_ridge_20251018_235001.csv",
+        "mean_prediction": -35889386.58323172,
+        "std_prediction": 17194028.586016282,
+        "metrics": {
+          "train_r2": 0.9999823291809876,
+          "test_r2": 0.9999819131517326,
+          "train_mae": 0.00017425448422993514,
+          "test_mae": 0.00017691765968811898,
+          "train_rmse": 0.00023516243356787976,
+          "test_rmse": 0.00024336241760456058
+        }
+      },
+      "random_forest": {
+        "file": "model_results/predictions_lucknow_training_random_forest_20251018_235001.csv",
+        "mean_prediction": 0.49014875819926423,
+        "std_prediction": 0.06759990439009718,
+        "metrics": {
+          "train_r2": 0.9999970003079646,
+          "test_r2": 0.999998793538316,
+          "train_mae": 9.675120131233204e-06,
+          "test_mae": 8.22743582257429e-06,
+          "train_rmse": 9.688977367109168e-05,
+          "test_rmse": 6.285340794158922e-05
+        }
+      },
+      "gradient_boosting": {
+        "file": "model_results/predictions_lucknow_training_gradient_boosting_20251018_235001.csv",
+        "mean_prediction": 0.49494054924717307,
+        "std_prediction": 0.0633575194187924,
+        "metrics": {
+          "train_r2": 0.9997962006278589,
+          "test_r2": 0.9997507652704866,
+          "train_mae": 0.0006244986202115053,
+          "test_mae": 0.0007022099891223735,
+          "train_rmse": 0.0007986215541652515,
+          "test_rmse": 0.0009033922132438517
+        }
+      }
+    },
+    "patna_training": {
+      "ridge": {
+        "file": "model_results/predictions_patna_training_ridge_20251018_235001.csv",
+        "mean_prediction": -44104836.12515543,
+        "std_prediction": 21129918.393503275,
+        "metrics": {
+          "train_r2": 0.9999813075392162,
+          "test_r2": 0.99998023653052,
+          "train_mae": 0.00018243206706064242,
+          "test_mae": 0.00019415047729188083,
+          "train_rmse": 0.0002418648991168397,
+          "test_rmse": 0.00025439212152052404
+        }
+      },
+      "random_forest": {
+        "file": "model_results/predictions_patna_training_random_forest_20251018_235001.csv",
+        "mean_prediction": 0.4901684349301247,
+        "std_prediction": 0.06760271945090973,
+        "metrics": {
+          "train_r2": 0.9999982131684315,
+          "test_r2": 0.9999834037578677,
+          "train_mae": 1.1406233966199032e-05,
+          "test_mae": 4.133759600346953e-05,
+          "train_rmse": 7.477930332315968e-05,
+          "test_rmse": 0.0002331186098676894
+        }
+      },
+      "gradient_boosting": {
+        "file": "model_results/predictions_patna_training_gradient_boosting_20251018_235001.csv",
+        "mean_prediction": 0.4952679078988728,
+        "std_prediction": 0.06327097839774748,
+        "metrics": {
+          "train_r2": 0.9997642502334232,
+          "test_r2": 0.9996764040763544,
+          "train_mae": 0.000679854454876468,
+          "test_mae": 0.0007571186920063714,
+          "train_rmse": 0.0008589447748605764,
+          "test_rmse": 0.0010293749241945356
+        }
+      }
+    },
+    "chandigarh_training": {
+      "ridge": {
+        "file": "model_results/predictions_chandigarh_training_ridge_20251018_235001.csv",
+        "mean_prediction": -35753223.74266144,
+        "std_prediction": 17128794.411630247,
+        "metrics": {
+          "train_r2": 0.9999818987879889,
+          "test_r2": 0.9999801026058946,
+          "train_mae": 0.000182372804842113,
+          "test_mae": 0.00019651471173516406,
+          "train_rmse": 0.0002380090297730386,
+          "test_rmse": 0.0002552525941128186
+        }
+      },
+      "random_forest": {
+        "file": "model_results/predictions_chandigarh_training_random_forest_20251018_235001.csv",
+        "mean_prediction": 0.4901560296690213,
+        "std_prediction": 0.06760094730581219,
+        "metrics": {
+          "train_r2": 0.9999979367188316,
+          "test_r2": 0.9999992253849658,
+          "train_mae": 8.873556689118618e-06,
+          "test_mae": 1.2804308861561542e-05,
+          "train_rmse": 8.035609316452388e-05,
+          "test_rmse": 5.0363398027745534e-05
+        }
+      },
+      "gradient_boosting": {
+        "file": "model_results/predictions_chandigarh_training_gradient_boosting_20251018_235001.csv",
+        "mean_prediction": 0.49493683095759433,
+        "std_prediction": 0.06324010359475228,
+        "metrics": {
+          "train_r2": 0.9998213273897558,
+          "test_r2": 0.9997517403031405,
+          "train_mae": 0.0005904931733762098,
+          "test_mae": 0.0006959708778145962,
+          "train_rmse": 0.0007477709640276855,
+          "test_rmse": 0.0009016233986008199
+        }
+      }
+    },
+    "north_india_regional": {
+      "ridge": {
+        "file": "model_results/predictions_north_india_regional_ridge_20251018_235001.csv",
+        "mean_prediction": -38415377.08382031,
+        "std_prediction": 18404190.279046584,
+        "metrics": {
+          "train_r2": 0.999998976296937,
+          "test_r2": 0.9999989590627079,
+          "train_mae": 4.32683595209768e-05,
+          "test_mae": 4.4335187732788694e-05,
+          "train_rmse": 5.6818463015591095e-05,
+          "test_rmse": 5.760313958612004e-05
+        }
+      },
+      "random_forest": {
+        "file": "model_results/predictions_north_india_regional_random_forest_20251018_235001.csv",
+        "mean_prediction": 0.49014875819926423,
+        "std_prediction": 0.06759990439009718,
+        "metrics": {
+          "train_r2": 0.999991753056492,
+          "test_r2": 0.9999999889168633,
+          "train_mae": 3.5844156762971257e-06,
+          "test_mae": 4.1506842409848206e-07,
+          "train_rmse": 0.00016126829335796883,
+          "test_rmse": 5.9438140872415345e-06
+        }
+      },
+      "gradient_boosting": {
+        "file": "model_results/predictions_north_india_regional_gradient_boosting_20251018_235001.csv",
+        "mean_prediction": 0.49472169794560655,
+        "std_prediction": 0.06311676471621447,
+        "metrics": {
+          "train_r2": 0.9998326999215117,
+          "test_r2": 0.9998249360450691,
+          "train_mae": 0.0005628947378613417,
+          "test_mae": 0.0005844577185537998,
+          "train_rmse": 0.0007263577129816798,
+          "test_rmse": 0.0007470200160573634
+        }
+      }
+    }
+  }
+}

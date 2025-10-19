@@ -108,8 +108,8 @@ class UnifiedDataPipeline:
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS crop_varieties (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    crop_type TEXT,
-                    variety_name TEXT,
+                    crop_type TEXT NOT NULL,
+                    variety_name TEXT NOT NULL,
                     maturity_days INTEGER,
                     water_requirement REAL,
                     temperature_optimal REAL,
@@ -117,7 +117,12 @@ class UnifiedDataPipeline:
                     temperature_min REAL,
                     region_prevalence TEXT,
                     season_type TEXT,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    yield_potential REAL,
+                    drought_tolerance TEXT,
+                    disease_resistance TEXT,
+                    market_value REAL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(crop_type, variety_name)
                 )
             ''')
 
