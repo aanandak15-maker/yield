@@ -809,12 +809,14 @@ class CropYieldPredictionService:
         """Generate fallback satellite data when real data unavailable"""
         dates = pd.date_range(end=datetime.now(), periods=days_back, freq='D')
 
-        # Typical NDVI/EVI ranges for North India
+        # Typical NDVI/EVI/FPAR/LAI ranges for North India
         np.random.seed(42)  # For consistent fallback data
         data = {
             'date': dates,
             'ndvi': np.random.normal(0.4, 0.1, days_back).clip(0.1, 0.8),
             'evi': np.random.normal(0.35, 0.08, days_back).clip(0.1, 0.7),
+            'fpar': np.random.normal(0.4, 0.08, days_back).clip(0.1, 0.7),  # Added FPAR
+            'lai': np.random.normal(2.0, 0.5, days_back).clip(0.5, 4.0),  # Added LAI
             'surface_temp': np.random.normal(25, 5, days_back).clip(10, 40),
             'chirps_precipitation': np.random.exponential(2, days_back)
         }
@@ -854,68 +856,79 @@ class CropYieldPredictionService:
             # Get current month for seasonal features
             current_month = datetime.now().month
             
-            # Aggregate satellite data (vegetation indices)
+            # Aggregate satellite data (vegetation indices) - FIXED
             if not satellite_data.empty:
+                # Properly handle DataFrame columns
                 features.update({
-                    'Fpar': satellite_data.get('fpar', [0.4]).mean(),
-                    'NDVI': satellite_data['ndvi'].mean() if 'ndvi' in satellite_data.columns else 0.4,
-                    'Lai': satellite_data.get('lai', [2.0]).mean()
+                    'Fpar': float(satellite_data['fpar'].mean()) if 'fpar' in satellite_data.columns else 0.4,
+                    'NDVI': float(satellite_data['ndvi'].mean()) if 'ndvi' in satellite_data.columns else 0.4,
+                    'Lai': float(satellite_data['lai'].mean()) if 'lai' in satellite_data.columns else 2.0
                 })
             else:
                 features.update({
                     'Fpar': 0.4, 'NDVI': 0.4, 'Lai': 2.0
                 })
 
-            # Aggregate weather data (basic weather features)
+            # Aggregate weather data (basic weather features) - FIXED
             if not weather_data.empty:
-                temp_max = weather_data['temp_max'].max() if 'temp_max' in weather_data.columns else 34
-                temp_min = weather_data['temp_min'].min() if 'temp_min' in weather_data.columns else 22
-                temp_mean = weather_data['temp'].mean() if 'temp' in weather_data.columns else 28
-                precipitation = weather_data.get('total_rain', [3.0]).mean()
-                humidity = weather_data['humidity'].mean() if 'humidity' in weather_data.columns else 65
+                temp_max = float(weather_data['temp_max'].max()) if 'temp_max' in weather_data.columns else 34.0
+                temp_min = float(weather_data['temp_min'].min()) if 'temp_min' in weather_data.columns else 22.0
+                temp_mean = float(weather_data['temp'].mean()) if 'temp' in weather_data.columns else 28.0
+                
+                # Fix precipitation handling
+                if 'total_rain' in weather_data.columns:
+                    precipitation = float(weather_data['total_rain'].mean())
+                elif 'precipitation' in weather_data.columns:
+                    precipitation = float(weather_data['precipitation'].mean())
+                else:
+                    precipitation = 3.0
+                
+                humidity = float(weather_data['humidity'].mean()) if 'humidity' in weather_data.columns else 65.0
                 
                 features.update({
                     'temp_max': temp_max,
                     'temp_min': temp_min,
                     'temp_mean': temp_mean,
                     'precipitation': precipitation,
-                    'humidity': humidity,
-                    'solar_radiation': weather_data.get('solar_radiation', [20.0]).mean()
+                    'humidity': humidity
                 })
 
                 # Derived features
                 features.update({
                     'temp_range': temp_max - temp_min,
-                    'gdd': max(0, temp_mean - 10),  # Growing degree days
-                    'precipitation_7d_sum': precipitation * 7,  # Approximate 7-day sum
-                    'heat_stress_days': 1 if temp_max > 35 else 0,
+                    'gdd': max(0.0, temp_mean - 10.0),  # Growing degree days
+                    'heat_stress_days': 1.0 if temp_max > 35 else 0.0,
                     'water_availability_index': min(1.0, precipitation / 10.0)
                 })
             else:
                 # Default values
                 features.update({
-                    'temp_max': 34, 'temp_min': 22, 'temp_mean': 28,
-                    'precipitation': 3.0, 'humidity': 65, 'solar_radiation': 20.0,
-                    'temp_range': 12, 'gdd': 18, 'precipitation_7d_sum': 21.0,
-                    'heat_stress_days': 0, 'water_availability_index': 0.3
+                    'temp_max': 34.0, 'temp_min': 22.0, 'temp_mean': 28.0,
+                    'precipitation': 3.0, 'humidity': 65.0,
+                    'temp_range': 12.0, 'gdd': 18.0,
+                    'heat_stress_days': 0.0, 'water_availability_index': 0.3
                 })
 
             # Seasonal features
             features.update({
-                'is_kharif_season': 1 if current_month in [6, 7, 8, 9, 10, 11] else 0,
-                'is_rabi_season': 1 if current_month in [10, 11, 12, 1, 2, 3] else 0,
-                'is_zaid_season': 1 if current_month in [4, 5] else 0
-            })
-
-            # Soil features (default values)
-            features.update({
-                'soil_ph': 7.0  # Neutral pH
+                'is_kharif_season': 1.0 if current_month in [6, 7, 8, 9, 10, 11] else 0.0,
+                'is_rabi_season': 1.0 if current_month in [10, 11, 12, 1, 2, 3] else 0.0,
+                'is_zaid_season': 1.0 if current_month in [4, 5] else 0.0
             })
 
         except Exception as e:
             self.logger.error(f"Failed to prepare features: {e}")
-            # Return default values
-            features = {col: 0.0 for col in self.feature_columns}
+            import traceback
+            self.logger.error(traceback.format_exc())
+            # Return default values for all expected features
+            features = {
+                'temp_max': 34.0, 'temp_min': 22.0, 'temp_mean': 28.0,
+                'precipitation': 3.0, 'humidity': 65.0,
+                'temp_range': 12.0, 'gdd': 18.0,
+                'heat_stress_days': 0.0, 'water_availability_index': 0.3,
+                'is_kharif_season': 0.0, 'is_rabi_season': 0.0, 'is_zaid_season': 0.0,
+                'Fpar': 0.4, 'NDVI': 0.4, 'Lai': 2.0
+            }
 
         return features
 
