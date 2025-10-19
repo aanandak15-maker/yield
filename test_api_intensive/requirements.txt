@@ -1,0 +1,61 @@
+# Core Testing Framework
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-xdist>=3.3.0  # Parallel test execution
+pytest-timeout>=2.1.0  # Test timeouts
+pytest-html>=3.2.0  # HTML test reports
+pytest-cov>=4.1.0  # Code coverage
+
+# HTTP Client Libraries
+requests>=2.31.0
+aiohttp>=3.8.5  # Async HTTP requests
+urllib3>=2.0.0
+
+# Performance and Load Testing
+locust>=2.15.0  # Load testing framework
+memory-profiler>=0.61.0  # Memory profiling
+psutil>=5.9.0  # System and process monitoring
+
+# Test Data Generation
+faker>=19.0.0  # Fake data generation
+hypothesis>=6.82.0  # Property-based testing
+
+# Data Analysis and Visualization
+pandas>=2.0.0  # Data analysis for metrics
+matplotlib>=3.7.0  # Charts and graphs
+seaborn>=0.12.0  # Statistical visualizations
+
+# Report Generation
+jinja2>=3.1.0  # Template engine for reports
+markdown>=3.4.0  # Markdown processing
+
+# Data Validation
+pydantic>=2.0.0  # Data validation
+jsonschema>=4.18.0  # JSON schema validation
+
+# Utilities
+python-dotenv>=1.0.0  # Environment variable management
+colorama>=0.4.6  # Colored terminal output
+tabulate>=0.9.0  # Pretty-print tabular data
+tqdm>=4.65.0  # Progress bars
+
+# Date/Time Handling
+python-dateutil>=2.8.2
+
+# Logging
+loguru>=0.7.0  # Enhanced logging
+
+# Optional: Database Testing
+pytest-postgresql>=5.0.0  # PostgreSQL fixtures (if needed)
+
+# Optional: API Mocking
+responses>=0.23.0  # Mock HTTP responses
+pytest-mock>=3.11.0  # Mocking utilities
+
+# Optional: Retry Logic
+tenacity>=8.2.0  # Retry library
+
+# Development Tools (optional)
+black>=23.7.0  # Code formatting
+flake8>=6.0.0  # Linting
+mypy>=1.4.0  # Type checking

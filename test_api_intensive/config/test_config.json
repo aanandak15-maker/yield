@@ -1,0 +1,328 @@
+{
+  "api": {
+    "base_url": "http://localhost:8000",
+    "timeout_seconds": 30,
+    "retry_attempts": 3,
+    "retry_delay_seconds": 1,
+    "verify_ssl": true
+  },
+  "test_data": {
+    "locations": [
+      {
+        "name": "Bhopal",
+        "latitude": 23.2599,
+        "longitude": 77.4126,
+        "region": "Madhya Pradesh",
+        "description": "Central India location for testing MP varieties"
+      },
+      {
+        "name": "Lucknow",
+        "latitude": 26.8467,
+        "longitude": 80.9462,
+        "region": "Uttar Pradesh",
+        "description": "UP location for testing regional varieties"
+      },
+      {
+        "name": "Chandigarh",
+        "latitude": 30.7333,
+        "longitude": 76.7794,
+        "region": "Punjab",
+        "description": "Punjab/Haryana location for testing northern varieties"
+      },
+      {
+        "name": "Patna",
+        "latitude": 25.5941,
+        "longitude": 85.1376,
+        "region": "Bihar",
+        "description": "Bihar location for testing eastern varieties"
+      },
+      {
+        "name": "Jaipur",
+        "latitude": 26.9124,
+        "longitude": 75.7873,
+        "region": "Rajasthan",
+        "description": "Rajasthan location for testing western varieties"
+      },
+      {
+        "name": "Dehradun",
+        "latitude": 30.3165,
+        "longitude": 78.0322,
+        "region": "Uttarakhand",
+        "description": "Uttarakhand location for testing hill varieties"
+      }
+    ],
+    "crops": ["Rice", "Wheat", "Maize"],
+    "sowing_dates": {
+      "Rice": {
+        "kharif": ["2024-06-15", "2024-07-01", "2024-07-15"],
+        "description": "Monsoon season rice sowing dates"
+      },
+      "Wheat": {
+        "rabi": ["2024-11-01", "2024-11-15", "2024-12-01"],
+        "description": "Winter season wheat sowing dates"
+      },
+      "Maize": {
+        "kharif": ["2024-06-01", "2024-06-15", "2024-07-01"],
+        "rabi": ["2024-10-15", "2024-11-01"],
+        "description": "Maize can be grown in both seasons"
+      }
+    },
+    "test_varieties": {
+      "Rice": [
+        "IR-64",
+        "Pusa Basmati 1121",
+        "Swarna",
+        "MTU 1010",
+        "Samba Mahsuri"
+      ],
+      "Wheat": [
+        "HD 3086",
+        "PBW 343",
+        "DBW 17",
+        "Lok 1",
+        "WH 1105"
+      ],
+      "Maize": [
+        "DHM 117",
+        "Vivek Hybrid 27",
+        "HQPM 1",
+        "Pusa Composite 3",
+        "Shaktiman 1"
+      ]
+    },
+    "field_polygons": {
+      "small_field": [
+        [77.4126, 23.2599],
+        [77.4136, 23.2599],
+        [77.4136, 23.2609],
+        [77.4126, 23.2609]
+      ],
+      "medium_field": [
+        [77.4126, 23.2599],
+        [77.4156, 23.2599],
+        [77.4156, 23.2629],
+        [77.4126, 23.2629]
+      ],
+      "large_field": [
+        [77.4126, 23.2599],
+        [77.4226, 23.2599],
+        [77.4226, 23.2699],
+        [77.4126, 23.2699]
+      ],
+      "irregular_field": [
+        [77.4126, 23.2599],
+        [77.4146, 23.2599],
+        [77.4156, 23.2619],
+        [77.4136, 23.2629],
+        [77.4116, 23.2619]
+      ]
+    }
+  },
+  "performance": {
+    "max_response_time_ms": 5000,
+    "max_response_time_under_load_ms": 10000,
+    "max_variety_selection_time_ms": 100,
+    "concurrent_users": [1, 10, 50, 100],
+    "load_test_duration_seconds": 60,
+    "ramp_up_time_seconds": 30,
+    "stress_test_max_users": 200,
+    "spike_test_users": 150,
+    "spike_duration_seconds": 10
+  },
+  "thresholds": {
+    "min_confidence_score": 0.7,
+    "min_yield_tons_per_hectare": 1.0,
+    "max_yield_tons_per_hectare": 10.0,
+    "max_error_rate_percent": 5.0,
+    "min_success_rate_percent": 95.0,
+    "max_p95_response_time_ms": 7000,
+    "max_p99_response_time_ms": 10000,
+    "min_throughput_requests_per_second": 10
+  },
+  "test_parameters": {
+    "timeout_seconds": 30,
+    "retry_attempts": 3,
+    "retry_delay_seconds": 1,
+    "max_retries_on_failure": 2,
+    "parallel_execution": true,
+    "max_workers": 4,
+    "fail_fast": false,
+    "verbose_logging": true,
+    "capture_screenshots": false,
+    "save_response_data": true
+  },
+  "validation": {
+    "invalid_crop_types": [
+      "rice",
+      "wheat",
+      "maize",
+      "RICE",
+      "Ric",
+      "Barley",
+      "Soybean",
+      "",
+      "123",
+      "Rice123"
+    ],
+    "invalid_coordinates": {
+      "out_of_range_lat": [91.0, -91.0, 100.0, -100.0],
+      "out_of_range_lon": [181.0, -181.0, 200.0, -200.0],
+      "non_numeric": ["abc", "null", "undefined", "NaN"],
+      "boundary_values": {
+        "min_lat": -90.0,
+        "max_lat": 90.0,
+        "min_lon": -180.0,
+        "max_lon": 180.0
+      }
+    },
+    "invalid_dates": {
+      "future_dates": ["2026-01-01", "2025-12-31"],
+      "wrong_formats": ["01-01-2024", "2024/01/01", "Jan 1 2024", "20240101"],
+      "too_old": ["2020-01-01", "2019-06-15"],
+      "invalid_dates": ["2024-13-01", "2024-02-30", "2024-00-01"]
+    },
+    "edge_cases": {
+      "min_polygon_points": 3,
+      "max_string_length": 10000,
+      "special_characters": ["<script>", "'; DROP TABLE--", "../../../etc/passwd", "${jndi:ldap://}"]
+    }
+  },
+  "security": {
+    "sql_injection_payloads": [
+      "' OR '1'='1",
+      "'; DROP TABLE varieties--",
+      "1' UNION SELECT NULL--",
+      "admin'--",
+      "' OR 1=1--"
+    ],
+    "xss_payloads": [
+      "<script>alert('XSS')</script>",
+      "<img src=x onerror=alert('XSS')>",
+      "javascript:alert('XSS')",
+      "<svg onload=alert('XSS')>"
+    ],
+    "path_traversal_payloads": [
+      "../../../etc/passwd",
+      "..\\..\\..\\windows\\system32\\config\\sam",
+      "....//....//....//etc/passwd"
+    ],
+    "command_injection_payloads": [
+      "; ls -la",
+      "| cat /etc/passwd",
+      "& whoami",
+      "`id`",
+      "$(whoami)"
+    ]
+  },
+  "integration": {
+    "external_services": {
+      "google_earth_engine": {
+        "enabled": true,
+        "mock_on_failure": true,
+        "timeout_seconds": 15
+      },
+      "openweather_api": {
+        "enabled": true,
+        "mock_on_failure": true,
+        "timeout_seconds": 10
+      }
+    },
+    "database": {
+      "test_db_path": "test_api_intensive/test_data/test_crop_prediction.db",
+      "reset_before_tests": false,
+      "backup_before_tests": true
+    }
+  },
+  "reporting": {
+    "output_directory": "test_api_intensive/reports",
+    "formats": ["html", "json", "markdown"],
+    "include_screenshots": false,
+    "include_request_response_logs": true,
+    "include_performance_charts": true,
+    "include_coverage_report": true,
+    "archive_old_reports": true,
+    "max_archived_reports": 10
+  },
+  "ci_cd": {
+    "enabled": false,
+    "run_on_pull_request": true,
+    "run_on_push_to_main": true,
+    "fail_on_error_rate_above": 5.0,
+    "fail_on_performance_regression": true,
+    "performance_regression_threshold_percent": 20,
+    "notify_on_failure": true,
+    "notification_channels": ["email", "slack"]
+  },
+  "environment": {
+    "test_environment": "local",
+    "api_key_env_var": "CROP_YIELD_API_KEY",
+    "gee_credentials_env_var": "GEE_SERVICE_ACCOUNT_KEY",
+    "openweather_key_env_var": "OPENWEATHER_API_KEY",
+    "log_level": "INFO",
+    "debug_mode": false
+  },
+  "test_suites": {
+    "functional": {
+      "enabled": true,
+      "priority": 1,
+      "estimated_duration_minutes": 5
+    },
+    "variety_selection": {
+      "enabled": true,
+      "priority": 1,
+      "estimated_duration_minutes": 3
+    },
+    "validation": {
+      "enabled": true,
+      "priority": 2,
+      "estimated_duration_minutes": 4
+    },
+    "performance": {
+      "enabled": true,
+      "priority": 3,
+      "estimated_duration_minutes": 10
+    },
+    "load": {
+      "enabled": true,
+      "priority": 4,
+      "estimated_duration_minutes": 5
+    },
+    "error_handling": {
+      "enabled": true,
+      "priority": 2,
+      "estimated_duration_minutes": 5
+    },
+    "security": {
+      "enabled": true,
+      "priority": 2,
+      "estimated_duration_minutes": 3
+    },
+    "integration": {
+      "enabled": true,
+      "priority": 3,
+      "estimated_duration_minutes": 8
+    },
+    "backward_compatibility": {
+      "enabled": true,
+      "priority": 1,
+      "estimated_duration_minutes": 3
+    },
+    "end_to_end": {
+      "enabled": true,
+      "priority": 4,
+      "estimated_duration_minutes": 10
+    },
+    "monitoring_logging": {
+      "enabled": true,
+      "priority": 3,
+      "estimated_duration_minutes": 4
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "created_date": "2025-01-19",
+    "last_updated": "2025-01-19",
+    "author": "QA Team",
+    "description": "Comprehensive test configuration for Crop Yield Prediction API intensive testing framework"
+  }
+}
